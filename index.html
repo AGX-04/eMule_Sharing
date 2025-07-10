@@ -1,31 +1,281 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-CN">
 <head>
-  <meta charset="UTF-8" />
-  <title>eMule 分享目录</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify/lib/themes/vue.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>eMule 分享 - AGX-04 归档</title>
+    <link rel="icon" href="https://github.githubassets.com/favicons/favicon.png" type="image/png">
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify@4/lib/themes/vue.css">
+    <style>
+        /* --- 自定义样式覆盖 --- */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+            background-color: #f6f8fa;
+            color: #24292e;
+        }
+
+        /* 主内容区域的容器，Docsify 默认提供 */
+        .content {
+            padding-top: 30px; /* 增加顶部内边距，避免内容被顶部导航栏覆盖 */
+        }
+
+        /* --- ED2K 链接复制按钮样式 --- */
+        .ed2k-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            background-color: #f9f9f9;
+            border: 1px solid #eee;
+            padding: 10px;
+            border-radius: 4px;
+            flex-wrap: wrap; /* 允许换行 */
+        }
+        .ed2k-link {
+            flex-grow: 1; /* 链接占据可用空间 */
+            word-break: break-all; /* 长链接自动换行 */
+            margin-right: 10px;
+            font-size: 0.9em;
+        }
+        .copy-btn {
+            background-color: #2ea44f;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85em;
+            flex-shrink: 0; /* 按钮不收缩 */
+            white-space: nowrap; /* 按钮文字不换行 */
+        }
+        .copy-btn:hover {
+            background-color: #2c974b;
+        }
+        .copy-btn:active {
+            background-color: #298e46;
+        }
+
+        /* --- 侧边栏折叠样式 --- */
+        /* 默认隐藏所有子级 UL */
+        .sidebar-nav > ul > li ul {
+            display: none;
+            overflow: hidden; /* Prevent content overflow when collapsed */
+        }
+
+        /* 显示已打开的子级 UL */
+        .sidebar-nav > ul > li.active > ul,
+        .sidebar-nav > ul > li .folder-open > ul { /* For nested active folders */
+            display: block;
+        }
+
+        /* 添加可点击的图标 */
+        .sidebar-nav li > a {
+            position: relative; /* For icon positioning */
+        }
+
+        .sidebar-nav li .folder-icon {
+            position: absolute;
+            right: 8px; /* Adjust as needed */
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 0.8em;
+            font-weight: bold;
+            color: #999;
+            transition: transform 0.2s ease-in-out;
+        }
+
+        .sidebar-nav li.collapsed > a .folder-icon::after {
+             content: '+'; /* Default icon for collapsed */
+        }
+        .sidebar-nav li.expanded > a .folder-icon::after {
+            content: '-'; /* Icon for expanded */
+        }
+
+        /* --- 移动端响应式 --- */
+        @media (max-width: 768px) {
+            .ed2k-container {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .ed2k-link {
+                margin-right: 0;
+                margin-bottom: 8px;
+                width: 100%;
+            }
+            .copy-btn {
+                width: 100%;
+                text-align: center;
+            }
+            /* Docsify 移动端侧边栏默认会隐藏 */
+            /* 如果你想要移动端侧边栏也折叠，需要针对 .sidebar-nav 进行适配 */
+        }
+    </style>
 </head>
 <body>
-  <div id="app">正在加载文档...</div>
+    <div id="app"></div>
 
-  <script>
-    window.$docsify = {
-      name: 'eMule 分享目录',
-      loadSidebar: true,
-      subMaxLevel: 2,
-      auto2top: true,
-      plugins: [
-        function(hook, vm) {
-          hook.doneEach(() => {
-            window.DocsifyCollapse.init();
-          });
+    <script>
+        // Docsify 配置
+        window.$docsify = {
+            name: 'eMule 分享',
+            repo: 'AGX-04/eMule_Sharing',
+            // 更多配置...
+            loadSidebar: true, // 确保加载 _sidebar.md
+            subMaxLevel: 3,    // 侧边栏显示到 H3 级别
+            auto2top: true,    // 切换页面后自动滚动到顶部
+            // ...
+
+            // 生命周期钩子，在渲染完成后执行
+            afterEach: function(html, next) {
+                // 处理 ED2K 链接复制按钮
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                const ed2kLinks = doc.querySelectorAll('a[href^="ed2k://"]');
+
+                ed2kLinks.forEach(link => {
+                    const linkHref = link.href;
+                    const linkText = link.textContent;
+
+                    const container = doc.createElement('div');
+                    container.className = 'ed2k-container';
+
+                    const linkSpan = doc.createElement('span');
+                    linkSpan.className = 'ed2k-link';
+                    const actualLink = doc.createElement('a');
+                    actualLink.href = linkHref;
+                    actualLink.textContent = linkText || linkHref;
+                    linkSpan.appendChild(actualLink);
+
+                    const copyButton = doc.createElement('button');
+                    copyButton.className = 'copy-btn';
+                    copyButton.textContent = '复制链接';
+                    copyButton.onclick = (e) => {
+                        e.preventDefault();
+                        copyToClipboard(linkHref);
+                    };
+
+                    container.appendChild(linkSpan);
+                    container.appendChild(copyButton);
+
+                    link.parentNode.replaceChild(container, link);
+                });
+                next(doc.documentElement.outerHTML); // 传回修改后的 HTML
+
+                // 执行侧边栏折叠逻辑，确保在 DOM 更新后执行
+                // 使用 setTimeout 确保 DOM 已经渲染完毕
+                setTimeout(() => {
+                    setupCollapsibleSidebar();
+                }, 0);
+            }
+        };
+
+        // --- 复制到剪贴板函数 ---
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(function() {
+                // 成功反馈，可添加 toast 提示
+            }, function(err) {
+                console.error('无法复制文本：', err);
+                alert('无法复制链接，请手动复制。');
+            });
         }
-      ]
-    };
-  </script>
 
-  <script src="//cdn.jsdelivr.net/npm/docsify/lib/docsify.min.js"></script>
-  <script src="https://unpkg.com/docsify-collapse@latest/dist/docsify-collapse.min.js"></script>
-</body>
+        // --- 侧边栏折叠逻辑 ---
+        function setupCollapsibleSidebar() {
+            const sidebarNav = document.querySelector('.sidebar-nav > ul');
+            if (!sidebarNav) return;
+
+            // 遍历所有顶级 li 元素
+            sidebarNav.querySelectorAll(':scope > li').forEach(li => {
+                const nestedUl = li.querySelector('ul'); // 查找直接子级的 ul
+
+                // 只有当存在嵌套 ul 时才处理
+                if (nestedUl) {
+                    const link = li.querySelector('a'); // 获取 li 中的链接
+                    if (link) {
+                        const icon = document.createElement('span');
+                        icon.className = 'folder-icon';
+                        link.appendChild(icon); // 将图标添加到链接内
+
+                        // 初始状态：如果当前 li 包含活动链接，则展开，否则折叠
+                        if (li.classList.contains('active')) {
+                            li.classList.add('expanded');
+                            nestedUl.style.display = 'block';
+                        } else {
+                            li.classList.add('collapsed');
+                            nestedUl.style.display = 'none';
+                        }
+
+                        // 点击事件监听器
+                        // 注意：Docsify 默认会处理点击链接跳转。我们只在点击链接以外的区域时才折叠/展开
+                        // 或者在点击链接时，如果链接不是当前活动页面，则折叠所有同级
+                        link.addEventListener('click', function(event) {
+                            // 阻止 Docsify 默认的路由跳转，只处理折叠
+                            // 如果是点击链接本身，Docsify 还会跳转，这没关系
+                            // 但如果点击的不是链接文字，而是 li 区域，则折叠/展开
+
+                            // 判断是否点击到了链接文本本身，或者是图标
+                            const isLinkTextClick = event.target === link || event.target === icon;
+
+                            if (isLinkTextClick) {
+                                // 切换折叠状态
+                                if (li.classList.contains('collapsed')) {
+                                    li.classList.remove('collapsed');
+                                    li.classList.add('expanded');
+                                    nestedUl.style.display = 'block';
+                                } else {
+                                    li.classList.remove('expanded');
+                                    li.classList.add('collapsed');
+                                    nestedUl.style.display = 'none';
+                                }
+                                event.preventDefault(); // 阻止默认的链接跳转行为
+                            }
+                        });
+                    }
+                }
+            });
+
+            // 递归处理子级目录的折叠
+            function processNestedLists(parentUl) {
+                parentUl.querySelectorAll(':scope > li').forEach(li => {
+                    const nestedUl = li.querySelector('ul');
+                    if (nestedUl) {
+                        const link = li.querySelector('a');
+                        if (link) {
+                            const icon = document.createElement('span');
+                            icon.className = 'folder-icon';
+                            link.appendChild(icon);
+
+                            if (li.classList.contains('active')) { // 如果是当前活动路径的父级，则展开
+                                li.classList.add('expanded');
+                                nestedUl.style.display = 'block';
+                            } else {
+                                li.classList.add('collapsed');
+                                nestedUl.style.display = 'none';
+                            }
+
+                            link.addEventListener('click', function(event) {
+                                const isLinkTextClick = event.target === link || event.target === icon;
+                                if (isLinkTextClick) {
+                                    if (li.classList.contains('collapsed')) {
+                                        li.classList.remove('collapsed');
+                                        li.classList.add('expanded');
+                                        nestedUl.style.display = 'block';
+                                    } else {
+                                        li.classList.remove('expanded');
+                                        li.classList.add('collapsed');
+                                        nestedUl.style.display = 'none';
+                                    }
+                                    event.preventDefault(); // Prevent default link navigation
+                                }
+                            });
+                        }
+                        processNestedLists(nestedUl); // 递归调用
+                    }
+                });
+            }
+            processNestedLists(sidebarNav); // 从顶级开始处理
+        }
+    </script>
+    <script src="//cdn.jsdelivr.net/npm/docsify@4"></script>
+    <script src="//cdn.jsdelivr.net/npm/docsify/lib/plugins/search.min.js"></script>
+    </body>
 </html>
