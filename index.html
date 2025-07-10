@@ -2,25 +2,160 @@
 <html>
 <head>
   <meta charset="UTF-8" />
-  <title>eMule Sharing Docs</title>
+  <title>eMule 分享 - AGX-04 归档</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify/themes/vue.css" />
+  <style>
+    /* --- ED2K 链接复制按钮自定义样式 --- */
+    .ed2k-container {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+        background-color: #f9f9f9;
+        border: 1px solid #eee;
+        padding: 10px;
+        border-radius: 4px;
+        flex-wrap: wrap; /* 允许换行 */
+    }
+    .ed2k-link {
+        flex-grow: 1; /* 链接占据可用空间 */
+        word-break: break-all; /* 长链接自动换行 */
+        margin-right: 10px;
+        font-size: 0.9em;
+    }
+    .copy-btn {
+        background-color: #2ea44f;
+        color: white;
+        border: none;
+        padding: 6px 12px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 0.85em;
+        flex-shrink: 0; /* 按钮不收缩 */
+        white-space: nowrap; /* 按钮文字不换行 */
+    }
+    .copy-btn:hover {
+        background-color: #2c974b;
+    }
+    .copy-btn:active {
+        background-color: #298e46;
+    }
+    /* 移动端响应式，使 ED2K 链接在小屏幕下垂直排列 */
+    @media (max-width: 768px) {
+        .ed2k-container {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        .ed2k-link {
+            margin-right: 0;
+            margin-bottom: 8px;
+            width: 100%;
+        }
+        .copy-btn {
+            width: 100%;
+            text-align: center;
+        }
+    }
+  </style>
 </head>
 <body>
-  <div id="app">Loading...</div>
+  <div id="app">加载中...</div>
+
   <script>
+    // --- 自定义函数：复制文本到剪贴板 ---
+    function copyToClipboard(text) {
+        navigator.clipboard.writeText(text).then(function() {
+            // 复制成功后可以在这里添加一个短暂的提示（例如：一个小的“已复制”浮窗）
+        }, function(err) {
+            console.error('无法复制文本：', err);
+            alert('无法复制链接，请手动复制。'); // 复制失败时的备用提示
+        });
+    }
+
+    // --- Docsify 配置 ---
     window.$docsify = {
-      loadSidebar: true,
-      subMaxLevel: 0,
-      sidebarDisplayLevel: 1,
+      name: 'eMule 分享', // 你的网站名称
+      repo: 'AGX-04/eMule_Sharing', // 你的 GitHub 仓库链接 (可选)
+      loadSidebar: true, // 启用侧边栏
+
+      // *** 关键修复：设置 subMaxLevel 来显示嵌套的目录 ***
+      // subMaxLevel 控制侧边栏目录的深度。
+      // 2 表示会显示 H1 和 H2 级别的标题/列表项。
+      // 3 表示会显示 H1、H2 和 H3 级别的标题/列表项。
+      // 你应该根据你的 `_sidebar.md` 文件中嵌套的最深层级来设置这个值。
+      // 例如，如果你有四层目录： `- 类别A - 子类别B - 项目C - 链接D`，那么你可能需要设置为 4。
+      subMaxLevel: 4, // 建议设置为你实际需要的最大层级，确保所有子目录都能被渲染
+
+      // Docsify-sidebar-collapse 插件配置
       sidebarCollapse: {
-        accordion: false,
-        collapseIcon: '-',
-        expandIcon: '+'
+        accordion: false, // 设置为 true 则一次只允许展开一个分类
+        // 如果设置为 true，那么当一个分类展开时，其他已展开的分类会自动收起。
+        // 如果设置为 false，则可以同时展开多个分类。
+        collapseIcon: '-', // 折叠时的图标
+        expandIcon: '+'    // 展开时的图标
+      },
+
+      // --- Docsify 生命周期钩子：在每个页面渲染后执行自定义逻辑 ---
+      afterEach: function(html, next) {
+          // 这个钩子在 Docsify 渲染完 Markdown 内容后被调用
+          // 我们在这里处理 ED2K 链接，并添加复制按钮
+
+          // 使用 DOMParser 将 HTML 字符串转换为 DOM 对象，以便进行操作
+          const parser = new DOMParser();
+          const doc = parser.parseFromString(html, 'text/html');
+
+          // 查找所有以 "ed2k://" 开头的链接
+          const ed2kLinks = doc.querySelectorAll('a[href^="ed2k://"]');
+
+          ed2kLinks.forEach(link => {
+              // 检查这个链接是否已经被处理过（避免重复添加按钮）
+              if (link.closest('.ed2k-container')) {
+                  return;
+              }
+
+              const linkHref = link.href; // 获取 ED2K 链接的完整 href 属性
+              const linkText = link.textContent; // 获取链接的显示文本
+
+              // 创建一个容器 div，用于包裹链接和复制按钮
+              const container = doc.createElement('div');
+              container.className = 'ed2k-container';
+
+              // 创建一个 span，用于显示链接文本（便于处理长链接）
+              const linkSpan = doc.createElement('span');
+              linkSpan.className = 'ed2k-link';
+              
+              // 创建一个真正的可点击链接，放入 linkSpan 中
+              const actualLink = doc.createElement('a'); 
+              actualLink.href = linkHref;
+              // 如果链接文本很长，可以考虑截断显示，但点击仍复制完整链接
+              actualLink.textContent = linkText || linkHref; // 如果没有文本，就显示链接本身
+              linkSpan.appendChild(actualLink);
+
+              // 创建复制按钮
+              const copyButton = doc.createElement('button');
+              copyButton.className = 'copy-btn';
+              copyButton.textContent = '复制链接';
+              // 给按钮添加点击事件：阻止默认行为，并调用复制函数
+              copyButton.onclick = (e) => {
+                  e.preventDefault(); 
+                  copyToClipboard(linkHref);
+              };
+
+              // 将链接显示和复制按钮添加到容器中
+              container.appendChild(linkSpan);
+              container.appendChild(copyButton);
+
+              // 用新的容器替换原来的链接元素
+              // link.parentNode 是链接的父元素，例如一个 <p> 或 <li>
+              link.parentNode.replaceChild(container, link);
+          });
+          
+          // 将修改后的 DOM 重新序列化为 HTML 字符串，并传递给 Docsify 继续处理
+          next(doc.documentElement.outerHTML);
       }
     };
   </script>
-  <script src="//cdn.jsdelivr.net/npm/docsify/lib/docsify.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/docsify@4/lib/docsify.min.js"></script>
   <script src="//cdn.jsdelivr.net/npm/docsify-sidebar-collapse/dist/docsify-sidebar-collapse.min.js"></script>
   <script src="//cdn.jsdelivr.net/npm/docsify-copy-code/dist/docsify-copy-code.min.js"></script>
 </body>
