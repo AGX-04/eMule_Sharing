@@ -3,52 +3,208 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title> Emule Sharing </title>
+    <title>eMule 分享 - AGX-04 归档</title>
+    <link rel="icon" href="https://github.githubassets.com/favicons/favicon.png" type="image/png">
     <style>
-        body { font-family: sans-serif; margin: 20px; line-height: 1.6; }
-        h1 { color: #333; }
-        ul { list-style: none; padding: 0; }
-        li { margin-bottom: 10px; background-color: #f9f9f9; padding: 10px; border-radius: 5px; }
-        .ed2k-link { word-break: break-all; color: #007bff; text-decoration: none; }
-        .ed2k-link:hover { text-decoration: underline; }
-        .copy-btn { margin-left: 10px; padding: 5px 10px; background-color: #28a745; color: white; border: none; border-radius: 3px; cursor: pointer; font-size: 0.8em; }
-        .copy-btn:hover { background-color: #218838; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+            margin: 0;
+            padding: 20px;
+            background-color: #f6f8fa;
+            color: #24292e;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 900px;
+            margin: 20px auto;
+            background-color: #ffffff;
+            border-radius: 6px;
+            box-shadow: 0 1px 3px rgba(27, 31, 35, 0.1);
+            padding: 30px;
+            border: 1px solid #e1e4e8;
+        }
+        h1, h2, h3, h4, h5, h6 {
+            color: #0366d6;
+            border-bottom: 1px solid #eaecef;
+            padding-bottom: 0.3em;
+            margin-top: 24px;
+            margin-bottom: 16px;
+            font-weight: 600;
+            line-height: 1.25;
+        }
+        p {
+            margin-bottom: 16px;
+        }
+        pre {
+            background-color: #f6f8fa;
+            padding: 16px;
+            border-radius: 3px;
+            overflow-x: auto;
+            font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+        }
+        code {
+            font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+            background-color: rgba(27, 31, 35, 0.05);
+            padding: 0.2em 0.4em;
+            border-radius: 3px;
+        }
+        a {
+            color: #0366d6;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        ul, ol {
+            padding-left: 2em;
+            margin-top: 0;
+            margin-bottom: 16px;
+        }
+        li {
+            margin-bottom: 0.5em;
+        }
+        /* Style for ED2K links */
+        .ed2k-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            background-color: #f9f9f9;
+            border: 1px solid #eee;
+            padding: 10px;
+            border-radius: 4px;
+            flex-wrap: wrap; /* Allow wrapping on smaller screens */
+        }
+        .ed2k-link {
+            flex-grow: 1; /* Allow link to take available space */
+            word-break: break-all; /* Break long links */
+            margin-right: 10px;
+            font-size: 0.9em;
+        }
+        .copy-btn {
+            background-color: #2ea44f;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85em;
+            flex-shrink: 0; /* Prevent button from shrinking */
+            white-space: nowrap; /* Keep "Copy Link" on one line */
+        }
+        .copy-btn:hover {
+            background-color: #2c974b;
+        }
+        .copy-btn:active {
+            background-color: #298e46;
+        }
+        /* Mobile responsiveness */
+        @media (max-width: 600px) {
+            .container {
+                padding: 15px;
+                margin: 10px auto;
+            }
+            .ed2k-container {
+                flex-direction: column; /* Stack link and button vertically */
+                align-items: flex-start; /* Align items to the start */
+            }
+            .ed2k-link {
+                margin-right: 0; /* No right margin when stacked */
+                margin-bottom: 8px; /* Add some space below link */
+                width: 100%; /* Link takes full width */
+            }
+            .copy-btn {
+                width: 100%; /* Button takes full width */
+                text-align: center;
+            }
+        }
     </style>
 </head>
 <body>
-    <h1>Emule Sharing</h1>
-    <p>欢迎来到我的 ED2K 链接归档。点击链接或复制按钮来获取你想要的资源。</p>
+    <div class="container">
+        <div id="content">Loading README.md content...</div>
+    </div>
 
-    <h2>纪录片</h2>
-    <ul>
-        <li>
-            <span class="link-label">NHK纪录片</span><br>
-            <a href="https://github.com/AGX-04/eMule_Sharing/tree/main/NHK%E7%BA%AA%E5%BD%95%E7%89%87</a>           
-        </li>
-        <li>
-            <span class="link-label">TBS纪录片</span><br>
-            <a href="https://github.com/AGX-04/eMule_Sharing/tree/main/TBS%E7%BA%AA%E5%BD%95%E7%89%87</a>
-        </li>
-    </ul>
-
-    <h2>书籍</h2>
-    <ul>
-        <li>
-            <span class="link-label">eMule v0.50a</span><br>
-            <a href="ed2k://file|eMule0.50a-Installer.exe|4321680|2F3C4D5E6F7A8B9C1D2E3F4A5B6C7D8E|h=A1B2C3D4E5F6G7H8I9J0K1L2M3N4O5P6/" class="ed2k-link">ed2k://file|eMule0.50a-Installer.exe|4321680|2F3C4D5E6F7A8B9C1D2E3F4A5B6C7D8E|h=A1B2C3D4E5F6G7H8I9J0K1L2M3N4O5P6/</a>
-            <button class="copy-btn" onclick="copyToClipboard('ed2k://file|eMule0.50a-Installer.exe|4321680|2F3C4D5E6F7A8B9C1D2E3F4A5B6C7D8E|h=A1B2C3D4E5F6G7H8I9J0K1L2M3N4O5P6/')">复制</button>
-        </li>
-    </ul>
-
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script>
+        // Function to copy text to clipboard
         function copyToClipboard(text) {
             navigator.clipboard.writeText(text).then(function() {
-                alert('链接已复制到剪贴板！');
+                // Optional: Show a temporary success message
+                // console.log('Link copied to clipboard!');
             }, function(err) {
-                console.error('无法复制文本：', err);
-                alert('无法复制链接，请手动复制。');
+                console.error('Could not copy text: ', err);
+                alert('无法复制链接，请手动复制。'); // Fallback alert
             });
         }
+
+        // Function to process ED2K links and add copy buttons
+        function processEd2kLinks() {
+            const ed2kLinks = document.querySelectorAll('a[href^="ed2k://"]');
+            ed2kLinks.forEach(link => {
+                // Check if we already processed this link
+                if (link.closest('.ed2k-container')) {
+                    return;
+                }
+
+                const linkHref = link.href;
+                const linkText = link.textContent; // Get the text that was parsed from markdown
+
+                // Create a container for the link and button
+                const container = document.createElement('div');
+                container.className = 'ed2k-container';
+
+                // Create a span for the visible link text (can be truncated if long)
+                const linkSpan = document.createElement('span');
+                linkSpan.className = 'ed2k-link';
+                // Use original text or link href if text is empty/short
+                linkSpan.textContent = linkText.length > 50 ? linkText.substring(0, 50) + '...' : linkText || linkHref;
+
+
+                // Re-add the actual clickable link inside the span, but hidden
+                const actualLink = document.createElement('a');
+                actualLink.href = linkHref;
+                actualLink.style.display = 'none'; // Hide the original link
+
+                // Add the actual link as a child of the span, or if you want to keep
+                // the original behavior of clicking the text to open, keep the original link,
+                // but then you'd be changing markdown generated structure.
+                // For simplicity, let's just make the entire ed2k-container clickable (or rely on the button)
+                linkSpan.innerHTML = `<a href="${linkHref}">${linkText || linkHref}</a>`; // Re-insert the clickable link inside the span
+
+                const copyButton = document.createElement('button');
+                copyButton.className = 'copy-btn';
+                copyButton.textContent = '复制链接';
+                copyButton.onclick = (e) => {
+                    e.preventDefault(); // Prevent default link behavior if button is clicked
+                    copyToClipboard(linkHref);
+                };
+
+                container.appendChild(linkSpan);
+                container.appendChild(copyButton);
+
+                // Replace the original link with the new container
+                link.parentNode.replaceChild(container, link);
+            });
+        }
+
+        // Fetch README.md content and render it
+        fetch('README.md')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.text();
+            })
+            .then(markdown => {
+                // Parse markdown to HTML
+                const htmlContent = marked.parse(markdown);
+                document.getElementById('content').innerHTML = htmlContent;
+                processEd2kLinks(); // Process links after content is loaded
+            })
+            .catch(error => {
+                console.error('Error fetching or rendering README.md:', error);
+                document.getElementById('content').innerHTML = '<p>无法加载内容。请检查仓库中的 README.md 文件是否存在或网络连接。</p>';
+            });
     </script>
 </body>
 </html>
