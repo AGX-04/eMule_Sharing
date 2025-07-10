@@ -16,7 +16,11 @@
       subMaxLevel: 2,
       auto2top: true,
       plugins: [
-        window.DocsifyCollapse.create()
+        function(hook, vm) {
+          hook.doneEach(() => {
+            window.DocsifyCollapse.init();
+          });
+        }
       ]
     };
   </script>
