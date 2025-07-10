@@ -78,7 +78,11 @@
       repo: 'AGX-04/eMule_Sharing',
       
       // *** 关键修复：明确指定 _sidebar.md 的路径 ***
-      loadSidebar: '_sidebar.md', 
+      loadSidebar: '/_sidebar.md', 
+      
+      // *** 新增：明确设置 base 路径，对于项目页面非常重要 ***
+      // 这里的 '/eMule_Sharing/' 应该是你的 GitHub 仓库名，前后都要有斜杠
+      base: '/eMule_Sharing/', 
 
       subMaxLevel: 4, // 确保所有层级都被渲染
 
