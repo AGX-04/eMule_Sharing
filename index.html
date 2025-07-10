@@ -2,33 +2,59 @@
 <html>
 <head>
   <meta charset="UTF-8" />
-  <title>eMule 分享 - AGX-04 归档 (调试)</title>
+  <title>eMule 分享 - AGX-04 归档</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify/themes/vue.css" />
   <style>
-    /* 简单的调试样式：确保侧边栏在初始时子项是隐藏的 */
-    .sidebar-nav > ul > li > ul {
-        /* This is docsify-sidebar-collapse plugin's default behavior,
-           but adding it here for visual confirmation if plugin fails to apply. */
-        display: none; 
+    /* --- ED2K 链接复制按钮自定义样式 --- */
+    .ed2k-container {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+        background-color: #f9f9f9;
+        border: 1px solid #eee;
+        padding: 10px;
+        border-radius: 4px;
+        flex-wrap: wrap;
     }
-    .sidebar-nav > ul > li.active > ul,
-    .sidebar-nav > ul > li.open > ul { /* 'open' is a class the plugin might add */
-        display: block;
+    .ed2k-link {
+        flex-grow: 1;
+        word-break: break-all;
+        margin-right: 10px;
+        font-size: 0.9em;
     }
-    /* 确保图标有空间 */
-    .sidebar-nav li > a {
-        position: relative;
+    .copy-btn {
+        background-color: #2ea44f;
+        color: white;
+        border: none;
+        padding: 6px 12px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 0.85em;
+        flex-shrink: 0;
+        white-space: nowrap;
     }
-    .sidebar-nav .sidebar-toggle-icon { /* This is the class docsify-sidebar-collapse uses for icons */
-        position: absolute;
-        right: 8px; /* Adjust as needed */
-        top: 50%;
-        transform: translateY(-50%);
-        font-size: 0.8em;
-        font-weight: bold;
-        color: #999;
-        cursor: pointer; /* Ensure it's clickable */
+    .copy-btn:hover {
+        background-color: #2c974b;
+    }
+    .copy-btn:active {
+        background-color: #298e46;
+    }
+    /* 移动端响应式，使 ED2K 链接在小屏幕下垂直排列 */
+    @media (max-width: 768px) {
+        .ed2k-container {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        .ed2k-link {
+            margin-right: 0;
+            margin-bottom: 8px;
+            width: 100%;
+        }
+        .copy-btn {
+            width: 100%;
+            text-align: center;
+        }
     }
   </style>
 </head>
@@ -36,55 +62,83 @@
   <div id="app">加载中...</div>
 
   <script>
+    // --- 自定义函数：复制文本到剪贴板 ---
+    function copyToClipboard(text) {
+        navigator.clipboard.writeText(text).then(function() {
+            // Optional: visual feedback
+        }, function(err) {
+            console.error('无法复制文本：', err);
+            alert('无法复制链接，请手动复制。');
+        });
+    }
+
     // --- Docsify 配置 ---
     window.$docsify = {
       name: 'eMule 分享',
       repo: 'AGX-04/eMule_Sharing',
-      loadSidebar: true,
+      
+      // *** 关键修复：明确指定 _sidebar.md 的路径 ***
+      loadSidebar: '_sidebar.md', 
+
       subMaxLevel: 4, // 确保所有层级都被渲染
 
       // Docsify-sidebar-collapse 插件配置
       sidebarCollapse: {
         accordion: false,
-        // 这里使用插件默认的图标，或者你可以继续用 '-' 和 '+' 覆盖。
-        // 但为了调试，我们先看插件是否能正常显示其自带的图标。
-        // collapseIcon: '-', // Optional: Your custom collapse icon
-        // expandIcon: '+'    // Optional: Your custom expand icon
+        collapseIcon: '-',
+        expandIcon: '+'
       },
 
-      // --- 关键调试钩子 ---
-      // 这个钩子在 Docsify 完成所有内容渲染后触发
+      // --- Docsify 生命周期钩子：在每次页面内容渲染后执行 ---
+      afterEach: function(html, next) {
+          const parser = new DOMParser();
+          const doc = parser.parseFromString(html, 'text/html');
+          const ed2kLinks = doc.querySelectorAll('a[href^="ed2k://"]');
+
+          ed2kLinks.forEach(link => {
+              if (link.closest('.ed2k-container')) {
+                  return;
+              }
+              const linkHref = link.href;
+              const linkText = link.textContent;
+              const container = doc.createElement('div');
+              container.className = 'ed2k-container';
+              const linkSpan = doc.createElement('span');
+              linkSpan.className = 'ed2k-link';
+              const actualLink = doc.createElement('a'); 
+              actualLink.href = linkHref;
+              actualLink.textContent = linkText || linkHref;
+              linkSpan.appendChild(actualLink);
+              const copyButton = doc.createElement('button');
+              copyButton.className = 'copy-btn';
+              copyButton.textContent = '复制链接';
+              copyButton.onclick = (e) => {
+                  e.preventDefault(); 
+                  copyToClipboard(linkHref);
+              };
+              container.appendChild(linkSpan);
+              container.appendChild(copyButton);
+              link.parentNode.replaceChild(container, link);
+          });
+          next(doc.documentElement.outerHTML);
+      },
+
+      // --- 调试钩子：确认侧边栏处理情况 ---
       doneEach: function() {
           console.log('--- Docsify doneEach Hook Fired ---');
-          console.log('Checking sidebar-nav element...');
           const sidebarNav = document.querySelector('.sidebar-nav');
           if (sidebarNav) {
               console.log('Sidebar nav element found:', sidebarNav);
-
-              // 检查 Docsify 渲染出的 LI 结构
-              const allListItems = sidebarNav.querySelectorAll('li');
-              console.log(`Total LI elements in sidebar: ${allListItems.length}`);
-              
               const parentListItems = sidebarNav.querySelectorAll('li:has(ul)');
               console.log(`LI elements with nested ULs (potential collapsible parents): ${parentListItems.length}`);
-
-              if (parentListItems.length > 0) {
-                  console.log('--- Found potential collapsible parents. Checking plugin application ---');
-                  parentListItems.forEach(li => {
-                      // 检查这些 LI 上是否有插件添加的特定类或元素
-                      // docsify-sidebar-collapse 通常会添加 'collapsed' 或 'open' 类，
-                      // 并在 <a> 标签内或旁边添加一个带有 'sidebar-toggle-icon' 类的 span。
-                      const link = li.querySelector('a');
-                      const icon = li.querySelector('.sidebar-toggle-icon'); // 插件添加的图标类
-
-                      console.log(`LI Text: "${li.textContent.trim().split('\n')[0]}"`); // 打印 LI 文本
-                      console.log('  Has <a> tag:', !!link);
-                      console.log('  Has .sidebar-toggle-icon:', !!icon);
-                      console.log('  LI classes:', li.classList.value);
-                  });
-              } else {
-                  console.warn('No LI elements with nested ULs found in sidebar-nav. This indicates _sidebar.md structure might not be correctly interpreted by Docsify for nesting, or subMaxLevel is too low.');
-              }
+              parentListItems.forEach(li => {
+                  const link = li.querySelector('a');
+                  const icon = li.querySelector('.sidebar-toggle-icon');
+                  console.log(`LI Text: "${link ? link.textContent.trim() : li.textContent.trim().split('\n')[0]}"`);
+                  console.log('  Has <a> tag:', !!link);
+                  console.log('  Has .sidebar-toggle-icon (should be true if plugin works):', !!icon);
+                  console.log('  LI classes:', li.classList.value);
+              });
           } else {
               console.warn('Sidebar nav element NOT found. Docsify sidebar might not be rendered.');
           }
@@ -93,5 +147,6 @@
   </script>
   <script src="//cdn.jsdelivr.net/npm/docsify@4/lib/docsify.min.js"></script>
   <script src="//cdn.jsdelivr.net/npm/docsify-sidebar-collapse/dist/docsify-sidebar-collapse.min.js"></script>
-  </body>
+  <script src="//cdn.jsdelivr.net/npm/docsify-copy-code/dist/docsify-copy-code.min.js"></script>
+</body>
 </html>
