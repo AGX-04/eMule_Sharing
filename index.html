@@ -1,11 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8">
-  <title>eMule Sharing</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <!-- 你也可以选其他主题，比如 buble.css、dark.css、pure.css -->
-  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify/lib/themes/vue.css">
+  <meta charset="UTF-8" />
+  <title>eMule 分享目录</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify/lib/themes/vue.css" />
 </head>
 <body>
   <div id="app">正在加载文档...</div>
@@ -13,12 +12,16 @@
   <script>
     window.$docsify = {
       name: 'eMule 分享目录',
-      repo: '',  // 如果你希望在页面右上角加 GitHub 链接，可填 repo 地址
       loadSidebar: true,
       subMaxLevel: 2,
-      auto2top: true
+      auto2top: true,
+      plugins: [
+        window.DocsifyCollapse.create()
+      ]
     };
   </script>
+
   <script src="//cdn.jsdelivr.net/npm/docsify/lib/docsify.min.js"></script>
+  <script src="https://unpkg.com/docsify-collapse@latest/dist/docsify-collapse.min.js"></script>
 </body>
 </html>
