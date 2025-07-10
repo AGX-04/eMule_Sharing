@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>eMule 分享 - AGX-04 归档</title>
+    <title>eMule 分享 - AGX-04 归档 (分类)</title>
     <link rel="icon" href="https://github.githubassets.com/favicons/favicon.png" type="image/png">
     <style>
         body {
@@ -23,15 +23,53 @@
             padding: 30px;
             border: 1px solid #e1e4e8;
         }
-        h1, h2, h3, h4, h5, h6 {
+        h1 {
             color: #0366d6;
             border-bottom: 1px solid #eaecef;
             padding-bottom: 0.3em;
-            margin-top: 24px;
+            margin-top: 0; /* Remove top margin for main title */
             margin-bottom: 16px;
             font-weight: 600;
             line-height: 1.25;
         }
+        /* Styles for expandable sections */
+        .collapsible-header {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            color: #0366d6;
+            padding: 5px 0;
+            margin-top: 15px;
+            font-weight: 600;
+            border-bottom: 1px dashed #eaecef; /* Lighter border for categories */
+        }
+        .collapsible-header:hover {
+            text-decoration: underline;
+        }
+        .collapsible-header h2, .collapsible-header h3 {
+            margin: 0;
+            padding: 0;
+            border-bottom: none;
+            flex-grow: 1; /* Allow title to take space */
+        }
+        .collapsible-icon {
+            margin-left: 10px;
+            font-size: 1.2em;
+            font-weight: bold;
+            width: 20px; /* Fixed width for consistent alignment */
+            text-align: center;
+        }
+        .collapsible-content {
+            display: block; /* Default to open */
+            padding-left: 20px; /* Indent content */
+            border-left: 2px solid #eaecef; /* Visual hierarchy */
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
+        .collapsible-content.hidden {
+            display: none;
+        }
+
         p {
             margin-bottom: 16px;
         }
@@ -103,6 +141,9 @@
                 padding: 15px;
                 margin: 10px auto;
             }
+            .collapsible-content {
+                padding-left: 10px;
+            }
             .ed2k-container {
                 flex-direction: column; /* Stack link and button vertically */
                 align-items: flex-start; /* Align items to the start */
@@ -121,7 +162,7 @@
 </head>
 <body>
     <div class="container">
-        <div id="content">Loading README.md content...</div>
+        <div id="content">Loading content...</div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
@@ -129,10 +170,9 @@
         // Function to copy text to clipboard
         function copyToClipboard(text) {
             navigator.clipboard.writeText(text).then(function() {
-                // Optional: Show a temporary success message
-                // console.log('Link copied to clipboard!');
+                // Optional: visual feedback
             }, function(err) {
-                console.error('Could not copy text: ', err);
+                console.error('无法复制文本：', err);
                 alert('无法复制链接，请手动复制。'); // Fallback alert
             });
         }
@@ -141,49 +181,90 @@
         function processEd2kLinks() {
             const ed2kLinks = document.querySelectorAll('a[href^="ed2k://"]');
             ed2kLinks.forEach(link => {
-                // Check if we already processed this link
+                // Ensure we don't process the same link twice if script runs multiple times
                 if (link.closest('.ed2k-container')) {
                     return;
                 }
 
                 const linkHref = link.href;
-                const linkText = link.textContent; // Get the text that was parsed from markdown
+                const linkText = link.textContent;
 
-                // Create a container for the link and button
                 const container = document.createElement('div');
                 container.className = 'ed2k-container';
 
-                // Create a span for the visible link text (can be truncated if long)
                 const linkSpan = document.createElement('span');
                 linkSpan.className = 'ed2k-link';
-                // Use original text or link href if text is empty/short
-                linkSpan.textContent = linkText.length > 50 ? linkText.substring(0, 50) + '...' : linkText || linkHref;
-
-
-                // Re-add the actual clickable link inside the span, but hidden
+                // Create a clickable anchor inside the span
                 const actualLink = document.createElement('a');
                 actualLink.href = linkHref;
-                actualLink.style.display = 'none'; // Hide the original link
-
-                // Add the actual link as a child of the span, or if you want to keep
-                // the original behavior of clicking the text to open, keep the original link,
-                // but then you'd be changing markdown generated structure.
-                // For simplicity, let's just make the entire ed2k-container clickable (or rely on the button)
-                linkSpan.innerHTML = `<a href="${linkHref}">${linkText || linkHref}</a>`; // Re-insert the clickable link inside the span
+                actualLink.textContent = linkText || linkHref; // Use parsed text or full href as fallback
+                linkSpan.appendChild(actualLink);
 
                 const copyButton = document.createElement('button');
                 copyButton.className = 'copy-btn';
                 copyButton.textContent = '复制链接';
                 copyButton.onclick = (e) => {
-                    e.preventDefault(); // Prevent default link behavior if button is clicked
+                    e.preventDefault();
                     copyToClipboard(linkHref);
                 };
 
                 container.appendChild(linkSpan);
                 container.appendChild(copyButton);
 
-                // Replace the original link with the new container
                 link.parentNode.replaceChild(container, link);
+            });
+        }
+
+        // Function to add collapsible functionality
+        function addCollapsibleSections() {
+            const contentDiv = document.getElementById('content');
+            const headings = contentDiv.querySelectorAll('h2, h3'); // Target H2 and H3 for collapse
+
+            headings.forEach(heading => {
+                const wrapper = document.createElement('div');
+                const header = document.createElement('div');
+                header.className = 'collapsible-header';
+
+                const icon = document.createElement('span');
+                icon.className = 'collapsible-icon';
+                icon.textContent = '-'; // Default to expanded
+
+                header.appendChild(heading.cloneNode(true)); // Clone the heading to put inside the header div
+                header.appendChild(icon);
+
+                // Find all sibling elements until the next heading of same or higher level
+                let nextSibling = heading.nextElementSibling;
+                const content = document.createElement('div');
+                content.className = 'collapsible-content';
+
+                // Get heading level (e.g., h2 -> 2, h3 -> 3)
+                const currentLevel = parseInt(heading.tagName.substring(1));
+
+                while (nextSibling) {
+                    const nextSiblingLevel = parseInt(nextSibling.tagName ? nextSibling.tagName.substring(1) : 99); // Assign high level to non-heading elements
+                    if (nextSibling.tagName && nextSiblingLevel <= currentLevel) {
+                        break; // Stop if we hit a heading of same or higher level
+                    }
+                    content.appendChild(nextSibling.cloneNode(true)); // Move element to content div
+                    nextSibling = nextSibling.nextElementSibling;
+                }
+
+                wrapper.appendChild(header);
+                wrapper.appendChild(content);
+
+                // Replace the original heading and its content with the new wrapper
+                heading.parentNode.insertBefore(wrapper, heading);
+                heading.remove(); // Remove original heading
+                // Remove the moved content elements from their original position
+                content.childNodes.forEach(child => {
+                    if (child.parentNode) child.parentNode.removeChild(child);
+                });
+
+
+                header.addEventListener('click', () => {
+                    content.classList.toggle('hidden');
+                    icon.textContent = content.classList.contains('hidden') ? '+' : '-';
+                });
             });
         }
 
@@ -199,7 +280,18 @@
                 // Parse markdown to HTML
                 const htmlContent = marked.parse(markdown);
                 document.getElementById('content').innerHTML = htmlContent;
-                processEd2kLinks(); // Process links after content is loaded
+
+                // Process collapsible sections before processing links
+                // This is a bit tricky as marked.js outputs raw HTML elements
+                // We need to operate on the DOM after marked.js is done.
+                // A better approach for true "tree view" might be to parse markdown
+                // into a JS object structure first, then build HTML.
+                // For simplicity and direct use of marked.js output, we'll iterate DOM elements.
+                addCollapsibleSections(); // Now add the collapsible logic
+
+                // After content is rendered and sections are potentially collapsed,
+                // then process ED2K links.
+                processEd2kLinks();
             })
             .catch(error => {
                 console.error('Error fetching or rendering README.md:', error);
