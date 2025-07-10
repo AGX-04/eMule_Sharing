@@ -77,12 +77,13 @@
       name: 'eMule 分享',
       repo: 'AGX-04/eMule_Sharing',
       
-      // *** 关键修复：明确指定 _sidebar.md 的路径 ***
-      loadSidebar: '/_sidebar.md', 
-      
-      // *** 新增：明确设置 base 路径，对于项目页面非常重要 ***
-      // 这里的 '/eMule_Sharing/' 应该是你的 GitHub 仓库名，前后都要有斜杠
+      // *** 关键修复：明确设置 base 路径 ***
+      // 这告诉 Docsify 你的网站根目录在 GitHub Pages 上是 /eMule_Sharing/
       base: '/eMule_Sharing/', 
+
+      // *** 关键修复：loadSidebar 使用相对路径 ***
+      // Docsify 会在 base 路径下寻找 _sidebar.md
+      loadSidebar: '_sidebar.md', 
 
       subMaxLevel: 4, // 确保所有层级都被渲染
 
