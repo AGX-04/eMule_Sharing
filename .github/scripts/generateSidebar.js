@@ -45,6 +45,7 @@ function walk(dir, basePath = '') {
 const sidebar = walk('.')
 
 const configContent = `export default {
+  base: '/eMule_Sharing/',
   lang: 'zh-CN',
   title: '纪录片索引',
   description: '通过ed2k链接整理各类纪录片资源',
