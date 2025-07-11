@@ -8,7 +8,7 @@
     "dev": "vitepress dev"
   },
   "dependencies": {
-    "vitepress": "^1.0.0"
+    "vitepress": "1.0.0"
   },
   "devDependencies": {
     "markdown-it-task-lists": "^2.1.1"
