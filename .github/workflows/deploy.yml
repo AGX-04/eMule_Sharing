@@ -17,13 +17,17 @@ jobs:
         with:
           node-version: '20'
 
-      - name: 安装依赖
+      - name: 初始化 package.json（如果不存在）
         run: |
-          npm install vitepress
+          if [ ! -f package.json ]; then
+            npm init -y
+          fi
+
+      - name: 安装依赖
+        run: npm install vitepress
 
       - name: 生成 sidebar 配置文件
-        run: |
-          node .github/scripts/generateSidebar.js
+        run: node .github/scripts/generateSidebar.js
 
       - name: 构建网站
         run: npx vitepress build .

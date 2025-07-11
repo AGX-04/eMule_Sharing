@@ -1,0 +1,8 @@
+{
+  "name": "doc-site",
+  "version": "1.0.0",
+  "private": true,
+  "devDependencies": {
+    "vitepress": "^1.0.0"
+  }
+}
