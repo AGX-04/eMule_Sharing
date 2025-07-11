@@ -38,6 +38,8 @@ function walk(dir, basePath = '') {
       if (path.basename(entry.name) === 'index.md' && basePath === '') continue
       const name = entry.name.slice(0, -MARKDOWN_EXT.length) // 去掉扩展名
       const link = '/' + relativePath.replace(/\\/g, '/').replace(MARKDOWN_EXT, '')
+      // ✅ 打印调试信息
+      console.log(`✔️ 文件: ${entry.name} -> link: ${link}`)
       items.push({ text: name, link })
     }
   }
