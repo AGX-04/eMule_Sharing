@@ -97,18 +97,8 @@ fs.mkdirSync(themeDir, { recursive: true });
 fs.writeFileSync(path.join(themeDir, 'index.js'), themeIndex.trim(), 'utf8');
 
 // 写入 theme/style.css
+// 修正后的 styleCss 定义，确保使用反引号，并且只定义一次
 const styleCss = `
-/* 显示复选框样式 */
-li input[type="checkbox"] {
-  margin-right: 0.5em;
-  transform: scale(1.2);
-  vertical-align: middle; /* 垂直居中复选框，使其与文字对齐 */
-}
-
-/* --- 优化后的 CSS 规则：隐藏项目符号并调整对齐 --- */
-
-// 写入 theme/style.css
-const styleCss = `  <--- 确保这里是反引号
 /* 显示复选框本身样式 */
 li input[type="checkbox"] {
   margin-right: 0.5em; /* 复选框与文字间的间距 */
@@ -116,7 +106,7 @@ li input[type="checkbox"] {
   vertical-align: middle; /* 垂直居中复选框，使其与文字对齐 */
 }
 
-/* --- 新的 CSS 规则：处理“mark”文本和列表对齐 --- */
+/* --- 最终优化 CSS 规则：处理“mark”文本和列表对齐 --- */
 
 li.task-list-item {
   list-style-type: none; /* 确保移除任何可能的默认列表符号 */
