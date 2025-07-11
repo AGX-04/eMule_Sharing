@@ -60,7 +60,6 @@ sidebarItems.unshift({
 
 // 构建 VitePress config.ts 文件内容
 const configContent = `import { defineConfig } from 'vitepress'
-import taskLists from 'markdown-it-task-lists'
 
 export default defineConfig({
   base: '/eMule_Sharing/',
