@@ -34,7 +34,8 @@ function walk(dir, basePath = '') {
         })
       }
     } else if (entry.isFile() && entry.name.endsWith(MARKDOWN_EXT)) {
-      if (relativePath === 'index.md') continue // ✅ 跳过 index.md
+      // ✅ 跳过任何路径下名为 index.md 的文件（只处理首页的 index.md）
+      if (path.basename(entry.name) === 'index.md' && basePath === '') continue
       const name = entry.name.slice(0, -MARKDOWN_EXT.length) // 去掉扩展名
       const link = '/' + relativePath.replace(/\\/g, '/').replace(MARKDOWN_EXT, '')
       items.push({ text: name, link })
