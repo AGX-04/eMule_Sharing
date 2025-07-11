@@ -56,7 +56,6 @@ sidebarItems.unshift({
 
 // ✅ 关键：替换掉注释，插入 sidebar JSON 字符串
 const configContent = `import { defineConfig } from 'vitepress'
-import './theme/style.css'
 
 export default defineConfig({
   base: '/eMule_Sharing/',
@@ -75,5 +74,26 @@ export default defineConfig({
 
 fs.mkdirSync('.vitepress', { recursive: true })
 fs.writeFileSync('.vitepress/config.ts', configContent, 'utf8')
+
+// ✅ 写入自定义主题入口
+fs.mkdirSync('.vitepress/theme', { recursive: true })
+fs.writeFileSync('.vitepress/theme/index.js', `import DefaultTheme from 'vitepress/theme'
+import './style.css'
+
+export default {
+  ...DefaultTheme
+}
+`, 'utf8')
+
+// ✅ 写入复选框样式
+fs.writeFileSync('.vitepress/theme/style.css', `
+input[type="checkbox"] {
+  margin-right: 0.5em;
+  transform: scale(1.2);
+}
+li.task-list-item {
+  list-style: none;
+}
+`, 'utf8')
 
 console.log('✅ 自动生成 .vitepress/config.ts 完成')
