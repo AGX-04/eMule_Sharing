@@ -121,7 +121,7 @@ li.task-list-item {
   /* 关键修改：定义三列，增加一个固定宽度的间隔列 */
   /* 0em: 隐藏“·”文本节点 */
   /* min-content: 复选框的宽度 */
-  /* 0.5em: 新增的固定间距列 */
+  /* 1em: 新增的固定间距列 */
   /* auto: 文本内容的宽度，占据剩余空间 */
   grid-template-columns: 0em min-content 0.5em auto; /* 非常重要！ */
   
