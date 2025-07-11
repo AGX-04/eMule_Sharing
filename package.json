@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "vitepress": "^1.0.0",
-    "markdown-it-task-checkbox": "^1.0.6"
+    "markdown-it-task-checkbox": "^1.0.6",
+    "markdown-it-tilde": "^1.2.0" 
   }
 }

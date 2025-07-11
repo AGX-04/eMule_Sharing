@@ -60,7 +60,8 @@ sidebarItems.unshift({
 
 // 生成 .vitepress/config.ts 文件
 const configContent = `import { defineConfig } from 'vitepress'
-import markdownItTaskCheckbox from 'markdown-it-task-checkbox' // 引入任务列表插件
+import markdownItTaskCheckbox from 'markdown-it-task-checkbox'
+import markdownItTilde from 'markdown-it-tilde' // 引入 markdown-it-tilde 插件
 
 export default defineConfig({
   base: '/eMule_Sharing/', // 你的 GitHub Pages 仓库名称
@@ -73,32 +74,8 @@ export default defineConfig({
   },
   markdown: {
     config: (md) => {
-      // 使用 markdown-it-task-checkbox 插件来处理复选框
-      md.use(markdownItTaskCheckbox, {
-        // 可选配置：如果希望点击复选框能改变文件内容，可以设为 true。
-        // 但对于静态页面，通常保持默认或 false，只关注渲染效果。
-        // disabled: false        
-      });
-      // --- 新增代码开始 ---
-      // 方法一：启用 markdown-it 内置的删除线规则 (推荐)
-      // markdown-it 默认就支持 ~~text~~，这里可能需要明确启用单波浪线
-      // 最简单通常是启用 'gfm' 插件或直接设置选项
-      
-      // md.enable('gfm'); // 尝试启用整个 GFM 规范
-      // 或更精确地启用 'strikethrough' 规则
-      md.enable('strikethrough'); // 启用内置的删除线规则
-      // 如果你的删除线是 ~text~ 这种单波浪线形式，
-      // 那么可能需要安装 markdown-it-tilde 插件，并在这里使用 md.use()。
-      // 但对于 ~~text~~ 这种标准形式，md.enable('strikethrough') 就足够了。
-      // 先尝试 md.enable('strikethrough'); 如果不行再考虑 markdown-it-tilde
-
-      // 如果你的删除线语法是单个波浪线 ~Text~，并且 md.enable('strikethrough') 无效，
-      // 你可能需要安装额外的 markdown-it-tilde 插件：
-      // npm install markdown-it-tilde
-      // 然后在这里添加：
-      // import markdownItTilde from 'markdown-it-tilde';
-      // md.use(markdownItTilde);
-      // --- 新增代码结束 ---      
+      md.use(markdownItTaskCheckbox); // 任务列表插件
+      md.use(markdownItTilde); // 启用单波浪线删除线插件
     }
   }
 })
@@ -166,15 +143,21 @@ li.task-list-item label {
   white-space: normal;   /* 确保文本正常换行 */
 }
 
-/* --- 勾选复选框时行变暗和删除线效果 --- */
+/* --- 勾选复选框时行变暗效果 (无删除线) --- */
 
 /* 当复选框被勾选时，选择其相邻的 label 元素（包含文本），并改变样式 */
 li.task-list-item input[type="checkbox"]:checked + label {
   color: #888; /* 文本颜色变暗（深灰色）*/
-  /* text-decoration: line-through; /* 添加删除线（已注释取消） */
   opacity: 0.7; /* 降低不透明度，使整行显得更暗淡 */
-  /* 添加平滑过渡效果，使样式变化更柔和 */
-  transition: color 0.3s ease, text-decoration 0.3s ease, opacity 0.3s ease; 
+  transition: color 0.3s ease, opacity 0.3s ease; 
+}
+
+/* --- 为 `markdown-it-tilde` 生成的删除线添加样式 --- */
+/* markdown-it-tilde 默认会将 ~text~ 渲染为 <del>text</del> */
+del {
+  text-decoration: line-through; /* 确保 <del> 标签有删除线效果 */
+  color: #888; /* 让删除线文本也变暗，与勾选状态一致 */
+  opacity: 0.7; /* 降低不透明度 */
 }
 `;
 fs.writeFileSync(path.join(themeDir, 'style.css'), styleCss.trim(), 'utf8'); // 写入 style.css
