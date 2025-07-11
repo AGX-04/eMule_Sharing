@@ -68,7 +68,7 @@ export default defineConfig({
   description: '提供道兰当年发布纪录片的ed2k链接资源并持续供源',
   srcDir: '.',
   themeConfig: {
-    sidebar: ${JSON.stringify(sidebar, null, 2)}
+    sidebar: ${JSON.stringify(sidebarItems, null, 2)}
   },
   markdown: {
     config(md) {
