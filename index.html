@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>eMule 链接分享</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; display: flex; }
+        .sidebar {
+            width: 300px;
+            background: #f4f4f4;
+            padding: 20px;
+            height: 100vh;
+            overflow-y: auto;
+            transition: transform 0.3s;
+        }
+        .sidebar.hidden { transform: translateX(-300px); }
+        .content { flex-grow: 1; padding: 20px; }
+        .toggle-btn {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            z-index: 1000;
+            cursor: pointer;
+        }
+        #search { width: 100%; padding: 10px; margin-bottom: 20px; }
+        ul { list-style: none; padding: 0; }
+        li { margin: 10px 0; }
+        .category-folder { margin-left: 10px; }
+        a { text-decoration: none; color: #0066cc; }
+        a:hover { text-decoration: underline; }
+        @media (max-width: 768px) {
+            .sidebar { position: fixed; transform: translateX(0); }
+            .content { margin-left: 0; }
+        }
+    </style>
+</head>
+<body>
+    <button class="toggle-btn" onclick="toggleSidebar()">☰</button>
+    <div class="sidebar" id="sidebar">
+        <h2>分类</h2>
+        <input type="text" id="search" placeholder="搜索链接...">
+        <ul id="category-list"></ul>
+    </div>
+    <div class="content" id="content">
+        <h1>eMule 链接分享</h1>
+        <p>请从左侧侧边栏选择分类浏览，或使用搜索框查找链接。</p>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script>
+        // 切换侧边栏
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('hidden');
+        }
+
+        // 递归加载分类和文件夹
+        function loadCategories(url, parentUl) {
+            fetch(url)
+                .then(response => response.json())
+                .then(items => {
+                    items.forEach(item => {
+                        if (item.type === 'file' && item.name.endsWith('.md')) {
+                            const li = document.createElement('li');
+                            const categoryName = item.name.replace('.md', '');
+                            li.innerHTML = `<a href="#" onclick="loadCategory('${item.download_url}', '${categoryName}')">${categoryName}</a>`;
+                            parentUl.appendChild(li);
+                        } else if (item.type === 'dir') {
+                            const li = document.createElement('li');
+                            li.innerHTML = `<strong>${item.name}</strong>`;
+                            const ul = document.createElement('ul');
+                            ul.className = 'category-folder';
+                            li.appendChild(ul);
+                            parentUl.appendChild(li);
+                            loadCategories(item.url, ul); // 递归加载子文件夹
+                        }
+                    });
+                });
+        }
+
+        // 加载 Markdown 文件并渲染
+        function loadCategory(url, name) {
+            fetch(url)
+                .then(response => response.text())
+                .then(data => {
+                    const content = document.getElementById('content');
+                    content.innerHTML = `<h1>${name}</h1>` + marked.parse(data);
+                    addSearchListener();
+                });
+        }
+
+        // 搜索功能
+        function addSearchListener() {
+            document.getElementById('search').addEventListener('input', function(e) {
+                const query = e.target.value.toLowerCase();
+                document.querySelectorAll('.content li').forEach(li => {
+                    const link = li.querySelector('a');
+                    if (link) {
+                        const text = link.textContent.toLowerCase();
+                        li.style.display = text.includes(query) ? '' : 'none';
+                    }
+                });
+            });
+        }
+
+        // 初始化分类列表
+        const categoryList = document.getElementById('category-list');
+        loadCategories('https://api.github.com/repos/AGX-04/eMule_Sharing/contents/', categoryList);
+    </script>
+</body>
+</html>
