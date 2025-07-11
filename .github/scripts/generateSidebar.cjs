@@ -97,39 +97,50 @@ fs.mkdirSync(themeDir, { recursive: true });
 fs.writeFileSync(path.join(themeDir, 'index.js'), themeIndex.trim(), 'utf8');
 
 // 写入 theme/style.css
-// 修正后的 styleCss 定义，确保使用反引号，并且只定义一次
 const styleCss = `
 /* 显示复选框本身样式 */
 li input[type="checkbox"] {
-  margin-right: 0.5em; /* 复选框与文字间的间距 */
-  transform: scale(1.2);
-  vertical-align: middle; /* 垂直居中复选框，使其与文字对齐 */
+  /* 移除所有默认的边距，由Grid来控制定位 */
+  margin: 0;
+  padding: 0;
+  transform: scale(1.2); /* 保持复选框大小 */
+  vertical-align: middle; /* 垂直居中，即使在Grid中也可能有用 */
+  /* 设置Grid区域，确保它只占据第一列 */
+  grid-area: checkbox; 
 }
 
-/* --- 最终优化 CSS 规则：处理“mark”文本和列表对齐 --- */
+/* --- 最终解决方案：使用 CSS Grid 布局 --- */
 
 li.task-list-item {
   list-style-type: none; /* 确保移除任何可能的默认列表符号 */
+  margin: 0;             /* 移除默认外边距 */
+  padding: 0;            /* 移除默认内边距 */
   
-  /* 关键：使用 text-indent 负值将“mark”文本推到左边看不见的地方 */
-  text-indent: -1.5em; /* 负值，将行首内容向左推。这个值可能需要微调！ */
-
-  /* 关键：使用 padding-left 为复选框和文字内容留出空间 */
-  padding-left: 1.5em; /* 正值，为复选框留出空间，同时覆盖掉 text-indent 推出去的部分 */
+  display: grid;         /* 将li变为Grid容器 */
+  /* 定义两列：第一列给复选框，第二列给文本内容 */
+  /* 0em 是为了确保“·”文本节点占据零宽度，effectively hiding it */
+  /* auto 让第二列（文本内容）占据剩余所有空间 */
+  grid-template-columns: 0em min-content auto; /* 非常重要！ */
   
-  /* 确保没有额外的外边距和内边距影响布局 */
-  margin: 0;
+  /* 定义网格区域：第一列是“mark”，第二列是“checkbox”，第三列是“content” */
+  /* 这样复选框和文本就分开了，不会重叠 */
+  grid-template-areas: ". checkbox content"; /* 注意：点号表示一个空白单元格 */
+  
+  /* 确保行高对齐 */
+  align-items: baseline; /* 或者 center, start, end 依据你的偏好 */
 }
 
-/* 确保复选框和标签的默认样式没有异常 */
-li.task-list-item input[type="checkbox"],
+/* 隐藏实际的“mark”文本节点 */
+/* 由于我们使用了 grid-template-columns: 0em ...，它应该已经被挤压不可见了 */
+/* 如果仍可见，可以尝试更复杂的隐藏方法，但通常不需要 */
+
+
+/* 将文本标签放到对应的Grid区域 */
 li.task-list-item label {
-  /* 移除任何可能从父级继承的 text-indent 影响 */
-  text-indent: 0; 
-  /* 确保它们没有额外的 margin/padding */
-  margin: 0;
-  padding: 0;
-  display: inline-block; /* 确保它们作为行内块级元素正常布局 */
+  grid-area: content; /* 将label放到第三列的content区域 */
+  margin: 0;          /* 移除默认边距 */
+  padding: 0;         /* 移除默认内边距 */
+  white-space: normal; /* 确保文本正常换行，避免单行显示导致溢出 */
 }
 `;
 fs.writeFileSync(path.join(themeDir, 'style.css'), styleCss.trim(), 'utf8');
