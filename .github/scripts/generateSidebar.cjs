@@ -17,7 +17,7 @@ function walk(dir, basePath = '') {
   const items = []
 
   for (const entry of entries) {
-    if (IGNORE_DIRS.includes(entry.name)) continue // 忽略隐藏文件夹或文件
+    if (IGNORE_DIRS.includes(entry.name)) continue
     if (entry.name.startsWith('.')) continue
 
     const fullPath = path.join(dir, entry.name)
@@ -29,17 +29,15 @@ function walk(dir, basePath = '') {
         items.push({
           text: entry.name,
           collapsible: true,
-          collapsed: true, // 文件夹默认折叠
+          collapsed: true,
           items: children
         })
       }
     } else if (entry.isFile() && entry.name.endsWith(MARKDOWN_EXT)) {
-      // 跳过根目录下的 index.md（它是首页）
       if (entry.name === 'index.md' && basePath === '') continue
 
       const name = entry.name.slice(0, -MARKDOWN_EXT.length)
       const link = '/' + encodeURI(relativePath.replace(/\\/g, '/').replace(MARKDOWN_EXT, ''))
-      // ✅ 打印调试信息
       console.log(`✔️ 文件: ${entry.name} -> link: ${link}`)
 
       items.push({ text: name, link })
@@ -49,16 +47,14 @@ function walk(dir, basePath = '') {
   return items
 }
 
-// 自动构建 sidebar 项
 const sidebarItems = walk('.')
 
-// 把首页加到最前面，但不要影响路由
 sidebarItems.unshift({
   text: '首页',
   link: '/'
 })
 
-// 构建 VitePress config.ts 文件内容
+// ✅ 关键：替换掉注释，插入 sidebar JSON 字符串
 const configContent = `import { defineConfig } from 'vitepress'
 
 export default defineConfig({
@@ -68,7 +64,7 @@ export default defineConfig({
   description: '提供道兰当年发布纪录片的ed2k链接资源并持续供源',
   srcDir: '.',
   themeConfig: {
-    sidebar: /* 这里放你的 sidebar JSON */
+    sidebar: ${JSON.stringify(sidebarItems, null, 2)}
   },
   markdown: {
     taskLists: true
