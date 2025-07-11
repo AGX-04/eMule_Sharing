@@ -61,7 +61,6 @@ sidebarItems.unshift({
 // 生成 .vitepress/config.ts 文件
 const configContent = `import { defineConfig } from 'vitepress'
 import markdownItTaskCheckbox from 'markdown-it-task-checkbox'
-import markdownItStrike from 'markdown-it-strike' // 引入 markdown-it-strike 插件
 
 export default defineConfig({
   base: '/eMule_Sharing/', // 你的 GitHub Pages 仓库名称
@@ -75,12 +74,7 @@ export default defineConfig({
   markdown: {
     config: (md) => {
       md.use(markdownItTaskCheckbox); // 任务列表插件
-
-      // 使用 markdown-it-strike 插件来处理删除线
-      // 配置它使其能够识别单波浪线 (~) 作为删除线标记
-      md.use(markdownItStrike, {
-        singleTilde: true // 关键：启用单波浪线删除线
-      });
+      // 这里没有添加任何关于删除线的 markdown-it 插件
     }
   }
 })
@@ -157,12 +151,12 @@ li.task-list-item input[type="checkbox"]:checked + label {
   transition: color 0.3s ease, opacity 0.3s ease; 
 }
 
-/* --- 为 markdown-it-strike 生成的删除线添加样式 --- */
-/* markdown-it-strike 默认会将 ~text~ 或 ~~text~~ 渲染为 <del>text</del> */
+/* 移除之前关于 <del> 标签的 CSS 样式，确保删除线不生效 */
 del {
-  text-decoration: line-through; /* 确保 <del> 标签有删除线效果 */
-  color: #888; /* 让删除线文本也变暗，与勾选状态一致 */
-  opacity: 0.7; /* 降低不透明度 */
+  /* 没有任何样式，或者设置 text-decoration: none; */
+  text-decoration: none; /* 明确移除删除线 */
+  color: inherit;        /* 恢复默认颜色 */
+  opacity: 1;            /* 恢复默认不透明度 */
 }
 `;
 fs.writeFileSync(path.join(themeDir, 'style.css'), styleCss.trim(), 'utf8'); // 写入 style.css
