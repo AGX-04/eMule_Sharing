@@ -71,7 +71,7 @@ export default defineConfig({
     sidebar: /* 这里放你的 sidebar JSON */
   },
   markdown: {
-    taskLists: true  // 只需开启这个开关，不要 import 也不用 md.use()
+    taskLists: true
   }
 })
 `
