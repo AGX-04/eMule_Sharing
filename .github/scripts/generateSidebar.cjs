@@ -67,7 +67,22 @@ export default defineConfig({
     sidebar: ${JSON.stringify(sidebarItems, null, 2)}
   },
   markdown: {
-    taskLists: true
+    // 明确启用 GFM (GitHub Flavored Markdown) 的所有特性
+    // 这里的 lineNumbers 是一个示例，你可以移除或保留
+    lineNumbers: true, // 可选，如果不需要行号可以移除
+    // 重点：尝试通过 config 函数更细致地配置 markdown-it
+    // VitePress 可能会对一些默认的 markdown-it 插件进行封装
+    // 再次强调，我们不在这里手动引入 markdown-it-task-lists
+    config: (md) => {
+      // 检查 VitePress 是否提供了内置的 GFM 插件
+      // 或者尝试直接开启 markdown-it 内部的 task_lists 规则
+      // 有些 markdown-it 版本可能通过 enable/disable 来控制
+      try {
+        md.enable('task_lists'); // 尝试直接启用 markdown-it 的 task_lists 规则
+      } catch (e) {
+        console.warn('Failed to enable task_lists via md.enable:', e);
+      }
+    }
   }
 })
 `;
