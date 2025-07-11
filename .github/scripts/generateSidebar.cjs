@@ -151,7 +151,7 @@ li.task-list-item label {
 /* 当复选框被勾选时，选择其相邻的 label 元素（包含文本），并改变样式 */
 li.task-list-item input[type="checkbox"]:checked + label {
   color: #888; /* 文本颜色变暗（深灰色）*/
-  text-decoration: line-through; /* 添加删除线 */
+  /* text-decoration: line-through; /* 添加删除线（已注释取消） */
   opacity: 0.7; /* 降低不透明度，使整行显得更暗淡 */
   /* 添加平滑过渡效果，使样式变化更柔和 */
   transition: color 0.3s ease, text-decoration 0.3s ease, opacity 0.3s ease; 
