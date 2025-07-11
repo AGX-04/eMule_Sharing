@@ -38,7 +38,7 @@ function walk(dir, basePath = '') {
       if (entry.name === 'index.md' && basePath === '') continue
 
       const name = entry.name.slice(0, -MARKDOWN_EXT.length)
-      const link = '/' + relativePath.replace(/\\/g, '/').replace(MARKDOWN_EXT, '')
+      const link = '/' + encodeURI(relativePath.replace(/\\/g, '/').replace(MARKDOWN_EXT, ''))
       // ✅ 打印调试信息
       console.log(`✔️ 文件: ${entry.name} -> link: ${link}`)
 
