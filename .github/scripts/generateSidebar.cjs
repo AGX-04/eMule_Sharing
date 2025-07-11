@@ -102,32 +102,35 @@ const styleCss = `
 li input[type="checkbox"] {
   margin-right: 0.5em;
   transform: scale(1.2);
+  vertical-align: middle; /* 垂直居中复选框，使其与文字对齐 */
 }
 
-/* --- 新增的 CSS 规则：隐藏列表项目符号并调整对齐 --- */
-/*
-  重要：
-  如果下面的 .task-list-item 不起作用，你需要通过浏览器开发者工具
-  检查渲染后的 HTML 中 <li> 标签的实际 class 名。
-  通常 markdown-it-task-checkbox 会添加 task-list-item。
-  如果实际没有这个 class，或者有其他更具体的类，我们需要调整这里的选择器。
-*/
+/* --- 优化后的 CSS 规则：隐藏项目符号并调整对齐 --- */
+
+/* 确保移除列表项的默认项目符号 */
 li.task-list-item {
-  list-style-type: none; /* 移除列表项前面的默认项目符号（例如“·”） */
+  list-style-type: none; /* 强制移除默认项目符号 */
+  padding-left: 0;      /* 确保没有默认的左内边距导致偏移 */
+  margin-left: 0;       /* 确保没有默认的左外边距导致偏移 */
 }
 
-/* 调整缩进，使复选框对齐 */
-li.task-list-item {
-  margin-left: -1.25em; /* 这是一个推荐值，你可能需要根据实际显示效果微调 */
-  /* 如果仍有问题，可以尝试更通用的选择器，但要注意可能影响其他列表： */
-  /* margin-left: -1em; /* 另一个尝试值 */
+/* 针对任务列表项内部的元素进行微调 */
+/* 如果 "·" 是伪元素或默认列表符号，list-style-type: none 应该能解决 */
+/* 但如果它是一个实际的 HTML 元素，我们需要更精准地处理 */
+
+/* 尝试将所有子元素向左移动，以覆盖任何默认的项目符号空间 */
+/* 这可能会影响所有 li.task-list-item 的子元素，包括 input 和 label */
+li.task-list-item > input[type="checkbox"],
+li.task-list-item > label {
+  margin-left: -1.5em; /* 再次尝试负边距，根据实际渲染效果调整 */
+  /* -1.5em 是一个起点，如果不够，可以增加到 -2em 或更多 */
+  /* 如果太靠左，可以减少负值 */
 }
 
-/* 如果上述 .task-list-item 仍无效，可以尝试更通用的但可能影响其他列表的样式 */
+/* 还可以考虑对 ::before 伪元素进行操作，但这个更高级，通常不需要 */
 /*
-ul > li {
-  list-style-type: none;
-  margin-left: -1.25em;
+li.task-list-item::before {
+  content: none !important;
 }
 */
 `;
