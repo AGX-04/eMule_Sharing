@@ -1,15 +1,25 @@
 const fs = require('fs')
 const path = require('path')
 
+// 忽略的文件夹
 const IGNORE_DIRS = ['.git', '.vitepress', 'node_modules', '.github']
+// 只识别 md 文件
 const MARKDOWN_EXT = '.md'
 
+/**
+ * 递归扫描目录，生成 sidebar 配置结构
+ * @param {string} dir 当前扫描目录
+ * @param {string} basePath 递归过程中相对路径（用于生成 link）
+ * @returns {Array} sidebar 数组项
+ */
 function walk(dir, basePath = '') {
   const entries = fs.readdirSync(dir, { withFileTypes: true })
   const items = []
 
   for (const entry of entries) {
     if (IGNORE_DIRS.includes(entry.name)) continue
+    if (entry.name.startsWith('.')) continue // 忽略隐藏文件夹或文件
+
     const fullPath = path.join(dir, entry.name)
     const relativePath = path.join(basePath, entry.name)
 
@@ -23,7 +33,7 @@ function walk(dir, basePath = '') {
         })
       }
     } else if (entry.isFile() && entry.name.endsWith(MARKDOWN_EXT)) {
-      const name = entry.name.replace(MARKDOWN_EXT, '')
+      const name = entry.name.slice(0, -MARKDOWN_EXT.length) // 去掉扩展名
       const link = '/' + relativePath.replace(/\\/g, '/').replace(MARKDOWN_EXT, '')
       items.push({ text: name, link })
     }
@@ -34,9 +44,7 @@ function walk(dir, basePath = '') {
 
 const sidebar = walk('.')
 
-const configContent = `import { defineConfig } from 'vitepress'
-
-export default defineConfig({
+const configContent = `export default {
   lang: 'zh-CN',
   title: '纪录片索引',
   description: '通过ed2k链接整理各类纪录片资源',
@@ -44,10 +52,12 @@ export default defineConfig({
   themeConfig: {
     sidebar: ${JSON.stringify(sidebar, null, 2)}
   }
-})
+}
 `
 
+// 确保 .vitepress 文件夹存在
 fs.mkdirSync('.vitepress', { recursive: true })
+// 写入 config.ts
 fs.writeFileSync('.vitepress/config.ts', configContent, 'utf8')
 
-console.log('✅ 自动生成 config.ts 已完成')
+console.log('✅ 自动生成 .vitepress/config.ts 完成')
