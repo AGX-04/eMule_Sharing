@@ -66,6 +66,7 @@ export default defineConfig({
   themeConfig: {
     sidebar: ${JSON.stringify(sidebarItems, null, 2)}
   },
+  theme: {},
   markdown: {
     taskLists: true
   }
