@@ -103,6 +103,33 @@ li input[type="checkbox"] {
   margin-right: 0.5em;
   transform: scale(1.2);
 }
+
+/* --- 新增的 CSS 规则：隐藏列表项目符号并调整对齐 --- */
+/*
+  重要：
+  如果下面的 .task-list-item 不起作用，你需要通过浏览器开发者工具
+  检查渲染后的 HTML 中 <li> 标签的实际 class 名。
+  通常 markdown-it-task-checkbox 会添加 task-list-item。
+  如果实际没有这个 class，或者有其他更具体的类，我们需要调整这里的选择器。
+*/
+li.task-list-item {
+  list-style-type: none; /* 移除列表项前面的默认项目符号（例如“·”） */
+}
+
+/* 调整缩进，使复选框对齐 */
+li.task-list-item {
+  margin-left: -1.25em; /* 这是一个推荐值，你可能需要根据实际显示效果微调 */
+  /* 如果仍有问题，可以尝试更通用的选择器，但要注意可能影响其他列表： */
+  /* margin-left: -1em; /* 另一个尝试值 */
+}
+
+/* 如果上述 .task-list-item 仍无效，可以尝试更通用的但可能影响其他列表的样式 */
+/*
+ul > li {
+  list-style-type: none;
+  margin-left: -1.25em;
+}
+*/
 `;
 fs.writeFileSync(path.join(themeDir, 'style.css'), styleCss.trim(), 'utf8');
 
