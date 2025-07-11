@@ -108,54 +108,39 @@ li input[type="checkbox"] {
 /* --- 优化后的 CSS 规则：隐藏项目符号并调整对齐 --- */
 
 // 写入 theme/style.css
-const styleCss = `
-/* 显示复选框样式 */
+const styleCss = `  <--- 确保这里是反引号
+/* 显示复选框本身样式 */
 li input[type="checkbox"] {
-  margin-right: 0.5em;
+  margin-right: 0.5em; /* 复选框与文字间的间距 */
   transform: scale(1.2);
   vertical-align: middle; /* 垂直居中复选框，使其与文字对齐 */
 }
 
-/* --- 最终解决方案：针对文本节点“mark”的隐藏和对齐 --- */
+/* --- 新的 CSS 规则：处理“mark”文本和列表对齐 --- */
 
 li.task-list-item {
-  list-style-type: none; /* 确保移除任何可能的默认列表样式 */
-  position: relative;    /* 允许子元素进行定位 */
-  padding-left: 1.5em;   /* 为复选框和内容留出空间，同时覆盖掉“mark”的位置 */
-  /* 这个 1.5em 需要根据实际情况调整，它决定了复选框距离左边缘的距离 */
+  list-style-type: none; /* 确保移除任何可能的默认列表符号 */
+  
+  /* 关键：使用 text-indent 负值将“mark”文本推到左边看不见的地方 */
+  text-indent: -1.5em; /* 负值，将行首内容向左推。这个值可能需要微调！ */
+
+  /* 关键：使用 padding-left 为复选框和文字内容留出空间 */
+  padding-left: 1.5em; /* 正值，为复选框留出空间，同时覆盖掉 text-indent 推出去的部分 */
+  
+  /* 确保没有额外的外边距和内边距影响布局 */
+  margin: 0;
 }
 
-li.task-list-item input[type="checkbox"] {
-  position: absolute;    /* 将复选框绝对定位 */
-  left: 0;               /* 放置在列表项的最左边 */
-  top: 0.25em;           /* 垂直方向微调，使其与文本基线对齐 */
-  margin-top: 0;         /* 移除默认上外边距 */
-  margin-right: 0.5em;   /* 复选框与文本的间距 */
-  transform: scale(1.2);
-  vertical-align: middle;
-}
-
+/* 确保复选框和标签的默认样式没有异常 */
+li.task-list-item input[type="checkbox"],
 li.task-list-item label {
-  /* 调整 label 的样式，确保它在复选框之后且没有被“mark”影响 */
-  margin-left: 0.5em; /* 确保标签文本与复选框之间有适当间距 */
+  /* 移除任何可能从父级继承的 text-indent 影响 */
+  text-indent: 0; 
+  /* 确保它们没有额外的 margin/padding */
+  margin: 0;
+  padding: 0;
+  display: inline-block; /* 确保它们作为行内块级元素正常布局 */
 }
-
-/* 隐藏在 input 之前的所有文本节点 (这个是关键，但可能不是万能) */
-/* 这种方法更像是一个高级技巧，依赖于 Markdown 的特定渲染行为 */
-/* 如果直接的文本节点无法通过常规CSS隐藏，我们则通过覆盖其显示区域 */
-/*
-li.task-list-item::before {
-  content: "";
-  display: block;
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 1.5em; /* 覆盖掉“mark”文本的宽度 */
-  height: 100%;
-  background-color: transparent; /* 或者你的背景色，以覆盖 */
-  z-index: 1; /* 确保覆盖在“mark”之上 */
-}
-*/
 `;
 fs.writeFileSync(path.join(themeDir, 'style.css'), styleCss.trim(), 'utf8');
 
