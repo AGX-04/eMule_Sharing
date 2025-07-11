@@ -29,6 +29,7 @@ function walk(dir, basePath = '') {
         items.push({
           text: entry.name,
           collapsible: true,
+          collapsed: true, // 文件夹默认折叠
           items: children,
         })
       }
