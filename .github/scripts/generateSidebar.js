@@ -50,4 +50,4 @@ export default defineConfig({
 fs.mkdirSync('.vitepress', { recursive: true })
 fs.writeFileSync('.vitepress/config.ts', configContent, 'utf8')
 
-console.log('✅ 自动生成 config.ts 完成')
+console.log('✅ 自动生成 config.ts 已完成')
