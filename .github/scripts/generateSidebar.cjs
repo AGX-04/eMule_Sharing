@@ -56,6 +56,7 @@ sidebarItems.unshift({
 
 // ✅ 关键：替换掉注释，插入 sidebar JSON 字符串
 const configContent = `import { defineConfig } from 'vitepress'
+import './theme/style.css'
 
 export default defineConfig({
   base: '/eMule_Sharing/',

@@ -1,0 +1,8 @@
+/* 显示复选框样式 */
+input[type="checkbox"] {
+  margin-right: 0.5em;
+  transform: scale(1.2);
+}
+li.task-list-item {
+  list-style: none; /* 去掉原点 */
+}
