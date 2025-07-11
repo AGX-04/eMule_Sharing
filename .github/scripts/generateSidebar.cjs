@@ -109,7 +109,7 @@ li input[type="checkbox"] {
   grid-area: checkbox; 
 }
 
-/* --- 最终解决方案：使用 CSS Grid 布局 --- */
+/* --- 最终优化 CSS Grid 布局：增加复选框与文本间距 --- */
 
 li.task-list-item {
   list-style-type: none; /* 确保移除任何可能的默认列表符号 */
@@ -117,14 +117,16 @@ li.task-list-item {
   padding: 0;            /* 移除默认内边距 */
   
   display: grid;         /* 将li变为Grid容器 */
-  /* 定义两列：第一列给复选框，第二列给文本内容 */
-  /* 0em 是为了确保“·”文本节点占据零宽度，effectively hiding it */
-  /* auto 让第二列（文本内容）占据剩余所有空间 */
-  grid-template-columns: 0em min-content auto; /* 非常重要！ */
   
-  /* 定义网格区域：第一列是“mark”，第二列是“checkbox”，第三列是“content” */
-  /* 这样复选框和文本就分开了，不会重叠 */
-  grid-template-areas: ". checkbox content"; /* 注意：点号表示一个空白单元格 */
+  /* 关键修改：定义三列，增加一个固定宽度的间隔列 */
+  /* 0em: 隐藏“·”文本节点 */
+  /* min-content: 复选框的宽度 */
+  /* 0.5em: 新增的固定间距列 */
+  /* auto: 文本内容的宽度，占据剩余空间 */
+  grid-template-columns: 0em min-content 0.5em auto; /* 非常重要！ */
+  
+  /* 定义网格区域：第一列是“mark”，第二列是“checkbox”，第三列是“gap”，第四列是“content” */
+  grid-template-areas: ". checkbox gap content"; /* 注意：增加了“gap”区域 */
   
   /* 确保行高对齐 */
   align-items: baseline; /* 或者 center, start, end 依据你的偏好 */
@@ -132,16 +134,17 @@ li.task-list-item {
 
 /* 隐藏实际的“mark”文本节点 */
 /* 由于我们使用了 grid-template-columns: 0em ...，它应该已经被挤压不可见了 */
-/* 如果仍可见，可以尝试更复杂的隐藏方法，但通常不需要 */
-
 
 /* 将文本标签放到对应的Grid区域 */
 li.task-list-item label {
-  grid-area: content; /* 将label放到第三列的content区域 */
+  grid-area: content; /* 将label放到第四列的content区域 */
   margin: 0;          /* 移除默认边距 */
   padding: 0;         /* 移除默认内边距 */
   white-space: normal; /* 确保文本正常换行，避免单行显示导致溢出 */
 }
+
+/* (可选) 如果你需要在间隔列里有任何内容，可以在这里定义 .gap 区域的样式 */
+/* 但通常这个区域是空白的，不需要额外样式 */
 `;
 fs.writeFileSync(path.join(themeDir, 'style.css'), styleCss.trim(), 'utf8');
 
