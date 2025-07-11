@@ -65,9 +65,15 @@ export default defineConfig({
   base: '/eMule_Sharing/',
   lang: 'zh-CN',
   title: 'Emule Sharing',
-  description: '整理以道兰发布的NHK为主的各类纪录片资源',
+  description: '提供道兰当年发布纪录片的ed2k链接资源并持续供源',
+  srcDir: '.',
   themeConfig: {
-    sidebar: ${JSON.stringify(sidebarItems, null, 2)}
+    sidebar: ${JSON.stringify(sidebar, null, 2)}
+  },
+  markdown: {
+    config(md) {
+      md.use(taskLists, { enabled: true, label: true, labelAfter: true }) //支持md5语法（复选框）
+    }
   }
 })
 `
