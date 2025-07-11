@@ -77,8 +77,28 @@ export default defineConfig({
       md.use(markdownItTaskCheckbox, {
         // 可选配置：如果希望点击复选框能改变文件内容，可以设为 true。
         // 但对于静态页面，通常保持默认或 false，只关注渲染效果。
-        // disabled: false
+        // disabled: false        
       });
+      // --- 新增代码开始 ---
+      // 方法一：启用 markdown-it 内置的删除线规则 (推荐)
+      // markdown-it 默认就支持 ~~text~~，这里可能需要明确启用单波浪线
+      // 最简单通常是启用 'gfm' 插件或直接设置选项
+      
+      // md.enable('gfm'); // 尝试启用整个 GFM 规范
+      // 或更精确地启用 'strikethrough' 规则
+      md.enable('strikethrough'); // 启用内置的删除线规则
+      // 如果你的删除线是 ~text~ 这种单波浪线形式，
+      // 那么可能需要安装 markdown-it-tilde 插件，并在这里使用 md.use()。
+      // 但对于 ~~text~~ 这种标准形式，md.enable('strikethrough') 就足够了。
+      // 先尝试 md.enable('strikethrough'); 如果不行再考虑 markdown-it-tilde
+
+      // 如果你的删除线语法是单个波浪线 ~Text~，并且 md.enable('strikethrough') 无效，
+      // 你可能需要安装额外的 markdown-it-tilde 插件：
+      // npm install markdown-it-tilde
+      // 然后在这里添加：
+      // import markdownItTilde from 'markdown-it-tilde';
+      // md.use(markdownItTilde);
+      // --- 新增代码结束 ---      
     }
   }
 })
