@@ -67,21 +67,15 @@ export default defineConfig({
     sidebar: ${JSON.stringify(sidebarItems, null, 2)}
   },
   markdown: {
-    // 明确启用 GFM (GitHub Flavored Markdown) 的所有特性
-    // 这里的 lineNumbers 是一个示例，你可以移除或保留
-    lineNumbers: true, // 可选，如果不需要行号可以移除
-    // 重点：尝试通过 config 函数更细致地配置 markdown-it
-    // VitePress 可能会对一些默认的 markdown-it 插件进行封装
-    // 再次强调，我们不在这里手动引入 markdown-it-task-lists
     config: (md) => {
-      // 检查 VitePress 是否提供了内置的 GFM 插件
-      // 或者尝试直接开启 markdown-it 内部的 task_lists 规则
-      // 有些 markdown-it 版本可能通过 enable/disable 来控制
-      try {
-        md.enable('task_lists'); // 尝试直接启用 markdown-it 的 task_lists 规则
-      } catch (e) {
-        console.warn('Failed to enable task_lists via md.enable:', e);
-      }
+      // 使用 markdown-it-task-checkbox 插件
+      md.use(markdownItTaskCheckbox, {
+        // 可选配置：如果你希望点击复选框能改变文件内容，可以设为 true
+        // 但通常对于静态页面，保持 false 更安全
+        // 如果设置为 true，需要后端支持来保存状态，否则只会是前端效果
+        // 建议先保持默认或设置为 false，关注渲染效果
+        // disabled: true // 或者设置 disabled 为 false
+      });
     }
   }
 })
