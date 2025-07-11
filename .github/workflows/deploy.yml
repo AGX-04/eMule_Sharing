@@ -24,7 +24,7 @@ jobs:
           fi
 
       - name: 安装依赖
-        run: npm install vitepress
+        run: npm install
 
       - name: 生成 sidebar 配置文件
         run: node .github/scripts/generateSidebar.js
