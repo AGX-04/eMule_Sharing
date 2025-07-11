@@ -64,8 +64,8 @@ const configContent = `import { defineConfig } from 'vitepress'
 export default defineConfig({
   base: '/eMule_Sharing/',
   lang: 'zh-CN',
-  title: '纪录片索引',
-  description: '通过ed2k链接整理各类纪录片资源',
+  title: 'Emule Sharing',
+  description: '整理以道兰发布的NHK为主的各类纪录片资源',
   themeConfig: {
     sidebar: ${JSON.stringify(sidebarItems, null, 2)}
   }
