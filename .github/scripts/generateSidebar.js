@@ -17,8 +17,8 @@ function walk(dir, basePath = '') {
   const items = []
 
   for (const entry of entries) {
-    if (IGNORE_DIRS.includes(entry.name)) continue
-    if (entry.name.startsWith('.')) continue // 忽略隐藏文件夹或文件
+    if (IGNORE_DIRS.includes(entry.name)) continue // 忽略隐藏文件夹或文件
+    if (entry.name.startsWith('.')) continue
 
     const fullPath = path.join(dir, entry.name)
     const relativePath = path.join(basePath, entry.name)
@@ -30,16 +30,18 @@ function walk(dir, basePath = '') {
           text: entry.name,
           collapsible: true,
           collapsed: true, // 文件夹默认折叠
-          items: children,
+          items: children
         })
       }
     } else if (entry.isFile() && entry.name.endsWith(MARKDOWN_EXT)) {
-      // ✅ 跳过任何路径下名为 index.md 的文件（只处理首页的 index.md）
-      if (path.basename(entry.name) === 'index.md' && basePath === '') continue
-      const name = entry.name.slice(0, -MARKDOWN_EXT.length) // 去掉扩展名
+      // 跳过根目录下的 index.md（它是首页）
+      if (entry.name === 'index.md' && basePath === '') continue
+
+      const name = entry.name.slice(0, -MARKDOWN_EXT.length)
       const link = '/' + relativePath.replace(/\\/g, '/').replace(MARKDOWN_EXT, '')
       // ✅ 打印调试信息
       console.log(`✔️ 文件: ${entry.name} -> link: ${link}`)
+
       items.push({ text: name, link })
     }
   }
@@ -47,29 +49,30 @@ function walk(dir, basePath = '') {
   return items
 }
 
-const sidebarItems = walk('.')  // 先定义 sidebarItems
+// 自动构建 sidebar 项
+const sidebarItems = walk('.')
+
+// 把首页加到最前面，但不要影响路由
 sidebarItems.unshift({
   text: '首页',
   link: '/'
 })
 
-const sidebar = sidebarItems    // 再赋值给 sidebar
+// 构建 VitePress config.ts 文件内容
+const configContent = `import { defineConfig } from 'vitepress'
 
-const configContent = `export default {
+export default defineConfig({
   base: '/eMule_Sharing/',
   lang: 'zh-CN',
   title: '纪录片索引',
   description: '通过ed2k链接整理各类纪录片资源',
-  srcDir: '.',
   themeConfig: {
-    sidebar: ${JSON.stringify(sidebar, null, 2)}
+    sidebar: ${JSON.stringify(sidebarItems, null, 2)}
   }
-}
+})
 `
 
-// 确保 .vitepress 文件夹存在
 fs.mkdirSync('.vitepress', { recursive: true })
-// 写入 config.ts
 fs.writeFileSync('.vitepress/config.ts', configContent, 'utf8')
 
 console.log('✅ 自动生成 .vitepress/config.ts 完成')
