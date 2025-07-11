@@ -27,7 +27,7 @@ jobs:
         run: npm install
 
       - name: 生成 sidebar 配置文件
-        run: node .github/scripts/generateSidebar.js
+        run: node .github/scripts/generateSidebar.cjs
 
       - name: 构建网站
         run: npx vitepress build .
