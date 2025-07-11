@@ -112,7 +112,7 @@
         const repoUrl = 'https://api.github.com/repos/AGX-04/eMule_Sharing/contents' + (path ? '/' + path : '');
         const response = await fetch(repoUrl, {
           headers: {
-            'Accept': 'application/vnd.github.v3+json'
+            'Accept': 'application/vnd.github.v3+json',
           }
         });
         const data = await response.json();
