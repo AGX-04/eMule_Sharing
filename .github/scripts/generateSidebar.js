@@ -45,6 +45,12 @@ function walk(dir, basePath = '') {
 
 const sidebar = walk('.')
 
+// 在开头添加首页
+sidebarItems.unshift({
+  text: '首页',
+  link: '/',
+})
+
 const configContent = `export default {
   base: '/eMule_Sharing/',
   lang: 'zh-CN',
