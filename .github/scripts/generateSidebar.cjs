@@ -107,30 +107,53 @@ li input[type="checkbox"] {
 
 /* --- 优化后的 CSS 规则：隐藏项目符号并调整对齐 --- */
 
-/* 确保移除列表项的默认项目符号 */
+// 写入 theme/style.css
+const styleCss = `
+/* 显示复选框样式 */
+li input[type="checkbox"] {
+  margin-right: 0.5em;
+  transform: scale(1.2);
+  vertical-align: middle; /* 垂直居中复选框，使其与文字对齐 */
+}
+
+/* --- 最终解决方案：针对文本节点“mark”的隐藏和对齐 --- */
+
 li.task-list-item {
-  list-style-type: none; /* 强制移除默认项目符号 */
-  padding-left: 0;      /* 确保没有默认的左内边距导致偏移 */
-  margin-left: 0;       /* 确保没有默认的左外边距导致偏移 */
+  list-style-type: none; /* 确保移除任何可能的默认列表样式 */
+  position: relative;    /* 允许子元素进行定位 */
+  padding-left: 1.5em;   /* 为复选框和内容留出空间，同时覆盖掉“mark”的位置 */
+  /* 这个 1.5em 需要根据实际情况调整，它决定了复选框距离左边缘的距离 */
 }
 
-/* 针对任务列表项内部的元素进行微调 */
-/* 如果 "·" 是伪元素或默认列表符号，list-style-type: none 应该能解决 */
-/* 但如果它是一个实际的 HTML 元素，我们需要更精准地处理 */
-
-/* 尝试将所有子元素向左移动，以覆盖任何默认的项目符号空间 */
-/* 这可能会影响所有 li.task-list-item 的子元素，包括 input 和 label */
-li.task-list-item > input[type="checkbox"],
-li.task-list-item > label {
-  margin-left: -1.5em; /* 再次尝试负边距，根据实际渲染效果调整 */
-  /* -1.5em 是一个起点，如果不够，可以增加到 -2em 或更多 */
-  /* 如果太靠左，可以减少负值 */
+li.task-list-item input[type="checkbox"] {
+  position: absolute;    /* 将复选框绝对定位 */
+  left: 0;               /* 放置在列表项的最左边 */
+  top: 0.25em;           /* 垂直方向微调，使其与文本基线对齐 */
+  margin-top: 0;         /* 移除默认上外边距 */
+  margin-right: 0.5em;   /* 复选框与文本的间距 */
+  transform: scale(1.2);
+  vertical-align: middle;
 }
 
-/* 还可以考虑对 ::before 伪元素进行操作，但这个更高级，通常不需要 */
+li.task-list-item label {
+  /* 调整 label 的样式，确保它在复选框之后且没有被“mark”影响 */
+  margin-left: 0.5em; /* 确保标签文本与复选框之间有适当间距 */
+}
+
+/* 隐藏在 input 之前的所有文本节点 (这个是关键，但可能不是万能) */
+/* 这种方法更像是一个高级技巧，依赖于 Markdown 的特定渲染行为 */
+/* 如果直接的文本节点无法通过常规CSS隐藏，我们则通过覆盖其显示区域 */
 /*
 li.task-list-item::before {
-  content: none !important;
+  content: "";
+  display: block;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1.5em; /* 覆盖掉“mark”文本的宽度 */
+  height: 100%;
+  background-color: transparent; /* 或者你的背景色，以覆盖 */
+  z-index: 1; /* 确保覆盖在“mark”之上 */
 }
 */
 `;
