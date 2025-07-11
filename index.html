@@ -1,35 +1,177 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8" />
-  <title>eMule Sharing</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="eMule/ed2k 下载资源分享库" />
-  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify/lib/themes/vue.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Emule Sharing</title>
+  <script src="https://cdn.jsdelivr.net/npm/marked@4.0.12/lib/marked.min.js"></script>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      background-color: #f0f0f0;
+    }
+    header {
+      background-color: #2563eb;
+      color: white;
+      padding: 1rem;
+      text-align: center;
+    }
+    header h1 {
+      margin: 0;
+      font-size: 1.5rem;
+    }
+    .container {
+      display: flex;
+      flex: 1;
+    }
+    aside {
+      width: 250px;
+      background-color: white;
+      box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+      padding: 1rem;
+      overflow-y: auto;
+    }
+    nav ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    nav ul li {
+      margin: 0.5rem 0;
+    }
+    nav ul li button {
+      width: 100%;
+      text-align: left;
+      background: none;
+      border: none;
+      color: #1e40af;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+    nav ul li button:hover {
+      color: #3b82f6;
+    }
+    nav ul li a {
+      color: #374151;
+      text-decoration: none;
+      font-size: 0.95rem;
+    }
+    nav ul li a:hover {
+      color: #1e40af;
+    }
+    nav ul ul {
+      padding-left: 1rem;
+      display: none;
+    }
+    nav ul ul.show {
+      display: block;
+    }
+    main {
+      flex: 1;
+      padding: 1.5rem;
+    }
+    #content {
+      max-width: 800px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+    #content a {
+      color: #1e40af;
+      text-decoration: underline;
+    }
+    @media (max-width: 768px) {
+      .container {
+        flex-direction: column;
+      }
+      aside {
+        width: 100%;
+        max-height: 200px;
+      }
+    }
+  </style>
 </head>
 <body>
-  <div id="app">正在加载中...</div>
-
+  <header>
+    <h1>Emule Sharing</h1>
+  </header>
+  <div class="container">
+    <aside>
+      <nav id="sidebar"></nav>
+    </aside>
+    <main>
+      <div id="content"></div>
+    </main>
+  </div>
   <script>
-    window.$docsify = {
-      name: 'eMule Sharing',
-      repo: '',
-      loadSidebar: true,
-      loadNavbar: false,
-      subMaxLevel: 2,
-      search: 'auto',
-      searchPlaceholder: '搜索 ed2k 文件名...',
-      searchNoData: '未找到结果',
-      themeColor: '#3F51B5'
-    };
+    async function fetchRepoStructure(path = '') {
+      try {
+        const repoUrl = 'https://api.github.com/repos/AGX-04/eMule_Sharing/contents' + (path ? '/' + path : '');
+        const response = await fetch(repoUrl, {
+          headers: {
+            'Accept': 'application/vnd.github.v3+json'
+          }
+        });
+        const data = await response.json();
+        return Array.isArray(data) ? data : [];
+      } catch (error) {
+        console.error('获取目录结构失败:', error);
+        return [];
+      }
+    }
+
+    async function buildSidebar(path = '') {
+      const files = await fetchRepoStructure(path);
+      const ul = document.createElement('ul');
+      for (const item of files) {
+        const li = document.createElement('li');
+        if (item.type === 'dir') {
+          const button = document.createElement('button');
+          button.innerHTML = `<span>📁</span> ${item.name}`;
+          const subUl = document.createElement('ul');
+          button.onclick = () => {
+            subUl.classList.toggle('show');
+            button.querySelector('span').textContent = subUl.classList.contains('show') ? '📂' : '📁';
+          };
+          li.appendChild(button);
+          li.appendChild(subUl);
+          ul.appendChild(li);
+          subUl.appendChild(await buildSidebar(item.path));
+        } else if (item.name.endsWith('.md')) {
+          const a = document.createElement('a');
+          a.href = '#';
+          a.textContent = item.name.replace('.md', '');
+          a.onclick = () => loadMarkdown(item.download_url);
+          li.appendChild(a);
+          ul.appendChild(li);
+        }
+      }
+      return ul;
+    }
+
+    async function loadMarkdown(url) {
+      try {
+        const response = await fetch(url);
+        const markdown = await response.text();
+        const content = document.getElementById('content');
+        content.innerHTML = marked.parse(markdown);
+      } catch (error) {
+        console.error('加载 Markdown 失败:', error);
+        document.getElementById('content').innerHTML = '<p>加载内容失败，请稍后重试。</p>';
+      }
+    }
+
+    async function init() {
+      const sidebar = document.getElementById('sidebar');
+      sidebar.appendChild(await buildSidebar());
+      const firstMd = sidebar.querySelector('a');
+      if (firstMd) firstMd.click();
+    }
+
+    init();
   </script>
-
-  <!-- Docsify 本体 -->
-  <script src="//cdn.jsdelivr.net/npm/docsify/lib/docsify.min.js"></script>
-  <!-- 搜索插件 -->
-  <script src="//cdn.jsdelivr.net/npm/docsify/lib/plugins/search.min.js"></script>
-
-  <!-- 留言板（待配置时可注释） -->
-  <!-- <script src="https://unpkg.com/valine/dist/Valine.min.js"></script> -->
 </body>
 </html>
