@@ -1,9 +1,13 @@
 {
-  "name": "doc-site",
+  "name": "emule-sharing-site",
+  "type": "module",
   "version": "1.0.0",
-  "private": true,
-  "type": "module"
-  "devDependencies": {
+  "description": "ED2K纪录片索引网站",
+  "scripts": {
+    "build": "vitepress build",
+    "dev": "vitepress dev"
+  },
+  "dependencies": {
     "vitepress": "^1.0.0"
   }
 }
