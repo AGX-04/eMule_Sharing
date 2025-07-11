@@ -69,12 +69,10 @@ export default defineConfig({
   description: '提供道兰当年发布纪录片的ed2k链接资源并持续供源',
   srcDir: '.',
   themeConfig: {
-    sidebar: ${JSON.stringify(sidebarItems, null, 2)}
+    sidebar: /* 这里放你的 sidebar JSON */
   },
   markdown: {
-    config(md) {
-      md.use(taskLists, { enabled: true, label: true, labelAfter: true }) //支持md5语法（复选框）
-    }
+    taskLists: true  // 只需开启这个开关，不要 import 也不用 md.use()
   }
 })
 `
