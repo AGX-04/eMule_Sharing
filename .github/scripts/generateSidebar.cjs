@@ -56,6 +56,8 @@ sidebarItems.unshift({
 
 // 生成 config.ts
 const configContent = `import { defineConfig } from 'vitepress'
+// 引入 markdown-it-task-checkbox 插件
+import markdownItTaskCheckbox from 'markdown-it-task-checkbox'
 
 export default defineConfig({
   base: '/eMule_Sharing/',
@@ -70,11 +72,8 @@ export default defineConfig({
     config: (md) => {
       // 使用 markdown-it-task-checkbox 插件
       md.use(markdownItTaskCheckbox, {
-        // 可选配置：如果你希望点击复选框能改变文件内容，可以设为 true
-        // 但通常对于静态页面，保持 false 更安全
-        // 如果设置为 true，需要后端支持来保存状态，否则只会是前端效果
-        // 建议先保持默认或设置为 false，关注渲染效果
-        // disabled: true // 或者设置 disabled 为 false
+        // 可选配置，通常默认即可
+        // disabled: false // 确保不是禁用状态
       });
     }
   }
