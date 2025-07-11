@@ -3,15 +3,8 @@ const path = require('path')
 
 // 忽略的文件夹
 const IGNORE_DIRS = ['.git', '.vitepress', 'node_modules', '.github']
-// 只识别 md 文件
 const MARKDOWN_EXT = '.md'
 
-/**
- * 递归扫描目录，生成 sidebar 配置结构
- * @param {string} dir 当前扫描目录
- * @param {string} basePath 递归过程中相对路径（用于生成 link）
- * @returns {Array} sidebar 数组项
- */
 function walk(dir, basePath = '') {
   const entries = fs.readdirSync(dir, { withFileTypes: true })
   const items = []
@@ -38,6 +31,7 @@ function walk(dir, basePath = '') {
 
       const name = entry.name.slice(0, -MARKDOWN_EXT.length)
       const link = '/' + encodeURI(relativePath.replace(/\\/g, '/').replace(MARKDOWN_EXT, ''))
+
       console.log(`✔️ 文件: ${entry.name} -> link: ${link}`)
 
       items.push({ text: name, link })
@@ -47,15 +41,13 @@ function walk(dir, basePath = '') {
   return items
 }
 
+// 生成 sidebar
 const sidebarItems = walk('.')
+sidebarItems.unshift({ text: '首页', link: '/' })
 
-sidebarItems.unshift({
-  text: '首页',
-  link: '/'
-})
-
-// ✅ 关键：替换掉注释，插入 sidebar JSON 字符串
+// 生成 .vitepress/config.ts
 const configContent = `import { defineConfig } from 'vitepress'
+import './theme/style.css'
 
 export default defineConfig({
   base: '/eMule_Sharing/',
@@ -66,35 +58,27 @@ export default defineConfig({
   themeConfig: {
     sidebar: ${JSON.stringify(sidebarItems, null, 2)}
   },
-  theme: {},
   markdown: {
     taskLists: true
   }
 })
 `
 
-fs.mkdirSync('.vitepress', { recursive: true })
-fs.writeFileSync('.vitepress/config.ts', configContent, 'utf8')
-
-// ✅ 写入自定义主题入口
-fs.mkdirSync('.vitepress/theme', { recursive: true })
-fs.writeFileSync('.vitepress/theme/index.js', `import DefaultTheme from 'vitepress/theme'
-import './style.css'
-
-export default {
-  ...DefaultTheme
-}
-`, 'utf8')
-
-// ✅ 写入复选框样式
-fs.writeFileSync('.vitepress/theme/style.css', `
-input[type="checkbox"] {
+// 确保 .vitepress/theme/style.css 存在
+const stylePath = path.join('.vitepress', 'theme', 'style.css')
+const styleContent = `
+/* 确保任务列表样式可见 */
+li input[type="checkbox"] {
   margin-right: 0.5em;
   transform: scale(1.2);
 }
-li.task-list-item {
-  list-style: none;
-}
-`, 'utf8')
+`
 
-console.log('✅ 自动生成 .vitepress/config.ts 完成')
+fs.mkdirSync(path.dirname(stylePath), { recursive: true })
+fs.writeFileSync(stylePath, styleContent, 'utf8')
+
+// 写 config.ts
+fs.mkdirSync('.vitepress', { recursive: true })
+fs.writeFileSync('.vitepress/config.ts', configContent, 'utf8')
+
+console.log('✅ 自动生成 .vitepress/config.ts 和 theme/style.css 完成')
