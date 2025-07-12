@@ -130,7 +130,7 @@ sidebarItems.unshift({
 // 生成 .vitepress/config.ts 文件
 const configContent = `import { defineConfig } from 'vitepress'
 import markdownItTaskCheckbox from 'markdown-it-task-checkbox'
-import vitepressSearch from 'vitepress-plugin-search' // 引入搜索插件
+iimport { pagefindPlugin } from 'vitepress-plugin-pagefind' // 搜索插件更换为pagefind
 
 export default defineConfig({
   base: '/eMule_Sharing/', // 你的 GitHub Pages 仓库名称
@@ -149,11 +149,11 @@ export default defineConfig({
   // --- 增加 Vite 配置块 ---
   vite: {
     plugins: [
-      vitepressSearch({
-        previewLength: 62,
-        buttonLabel: '搜索',
+      pagefindPlugin({
+        btnPlaceholder: '搜索',
         placeholder: '输入关键词...',
-        tokenize: 'full'
+        emptyText: '暂无结果',
+        forceLanguage: 'zh-cn'
       })
     ]
   }
