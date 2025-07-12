@@ -10,6 +10,6 @@
   "dependencies": {
     "vitepress": "^1.0.0",
     "markdown-it-task-checkbox": "^1.0.6",
-    "vitepress-plugin-search": "^0.8.0" 
+    "vitepress-plugin-search": "^0.7.1" 
   }
 }
