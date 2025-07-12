@@ -168,6 +168,13 @@ const styleCss = `
   --vp-layout-max-width: 1440px; /* 根据需要调整整个布局的最大宽度，以提供更多内容空间 */
 }
 
+/* --- 侧边栏文本换行样式 --- */
+.VPSidebarItem .text {
+  word-break: break-all; /* 强制在任何字符处换行，包括英文单词内部 */
+  /* 或者 word-wrap: break-word; 效果类似，有些情况下表现更好 */
+}
+/* --- 侧边栏文本换行样式 结束 --- */
+
 /* --- 复选框任务列表样式 --- */
 
 /* 隐藏 VitePress 默认的列表项目符号 */
