@@ -32,8 +32,15 @@ jobs:
       - name: 构建网站
         run: npx vitepress build .
 
+      - name: 检查 dist 目录内容
+        run: ls -al .vitepress/dist
+
+      - name: 检查 .pagefind 目录内容
+        run: ls -al .vitepress/dist/.pagefind || echo ".pagefind 不存在"
+
       - name: 部署到 GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: .vitepress/dist
+          keep_files: true
