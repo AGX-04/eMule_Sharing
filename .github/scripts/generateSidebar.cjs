@@ -178,7 +178,7 @@ const giscusConfig = {
   'data-repo-id': 'R_kgDOKu7dZw',          // <-- 你的仓库 ID
   'data-category': 'General',              // <-- 你的 Discussions 分类名
   'data-category-id': 'DIC_kwDOKu7dZ84Cs3PD', // <-- 你的分类 ID
-  'data-mapping': 'pathname',
+  'data-mapping': 'title',
   'data-strict': '0',
   'data-reactions-enabled': '1',
   'data-emit-metadata': '0',
