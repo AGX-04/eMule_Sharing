@@ -162,71 +162,10 @@ fs.writeFileSync(path.join(themeDir, 'index.js'), themeIndex.trim(), 'utf8'); //
 
 // 生成 .vitepress/theme/style.css 文件
 const styleCss = `
-/* --- 基本复选框和列表样式 --- */
+/* 你可以在这里添加你需要的自定义全局样式 */
+/* 例如，如果你需要一些全局的字体设置或颜色变量 */
 
-/* 隐藏 VitePress 默认的列表项目符号 */
-ul {
-  list-style-type: none; /* 移除无序列表的默认项目符号 */
-  padding-left: 0;      /* 移除默认左内边距 */
-  margin: 0;            /* 移除默认外边距 */
-}
-
-/* 任务列表项（li.task-list-item）的布局 */
-li.task-list-item {
-  list-style-type: none; /* 再次确保移除列表项本身的符号 */
-  margin: 0;             /* 移除默认外边距 */
-  padding: 0;            /* 移除默认内边距 */
-  
-  display: grid;         /* 启用 CSS Grid 布局 */
-  /* 定义列：0em（隐藏“·”）、min-content（复选框）、1em（间距）、auto（文本内容）*/
-  grid-template-columns: 0em min-content 1em auto;
-  grid-template-areas: ". checkbox gap content"; /* 定义网格区域名称 */
-  
-  align-items: baseline; /* 垂直对齐，使复选框与文本基线对齐 */
-  line-height: 1.5;      /* 调整行高，可根据实际效果微调 */
-  margin-bottom: 0.5em;  /* 任务列表项之间的垂直间距 */
-}
-
-/* 复选框本身的样式和定位 */
-li input[type="checkbox"] {
-  grid-area: checkbox;   /* 将复选框放入“checkbox”区域 */
-  margin: 0;             /* 移除所有默认外边距 */
-  padding: 0;            /* 移除所有默认内边距 */
-  transform: scale(1.2); /* 放大复选框图标 */
-  vertical-align: middle; /* 垂直居中，即使在Grid中也可能有用 */
-  justify-self: center; /* 在其网格单元格内水平居中 */
-  align-self: center;   /* 在其网格单元格内垂直居中 */
-}
-
-/* 文本标签的样式和定位 */
-li.task-list-item label {
-  grid-area: content;    /* 将标签文本放入“content”区域 */
-  margin: 0;             /* 移除所有默认外边距 */
-  padding: 0;            /* 移除所有内边距 */
-  white-space: normal;   /* 确保文本正常换行 */
-}
-
-/* --- 勾选复选框时行变暗效果 (无删除线) --- */
-
-/* 当复选框被勾选时，选择其相邻的 label 元素（包含文本），并改变样式 */
-li.task-list-item input[type="checkbox"]:checked + label {
-  color: #888; /* 文本颜色变暗（深灰色）*/
-  opacity: 0.7; /* 降低不透明度，使整行显得更暗淡 */
-  transition: color 0.3s ease, opacity 0.3s ease; 
-}
-
-/* 确保 <del> 标签没有删除线，颜色和不透明度恢复默认 */
-del {
-  text-decoration: none;
-  color: inherit;
-  opacity: 1;
-}
-
-/* 调整侧边栏宽度和整体布局的最大宽度 */
-:root {
-  --vp-sidebar-width: 200px; /* 根据需要调整侧边栏宽度 */
-  --vp-layout-max-width: 1440px; /* 根据需要调整整个布局的最大宽度，以提供更多内容空间 */
-}
+/* 确保 VitePress 默认样式能正常加载 */
 `;
 fs.writeFileSync(path.join(themeDir, 'style.css'), styleCss.trim(), 'utf8');
 
