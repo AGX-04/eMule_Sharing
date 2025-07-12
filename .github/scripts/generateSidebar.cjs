@@ -186,6 +186,7 @@ li.task-list-item {
   display: flex;
   align-items: baseline; /* 垂直对齐，使复选框与文本基线对齐 */
   gap: 0.5em;            /* 复选框和文本之间的间距 */
+  line-height: 1.5; /* 默认或你觉得合适的行高，可以尝试更小的值如 1.2 或 1.4 */
 }
 
 /* 复选框本身的样式调整 */
