@@ -130,7 +130,7 @@ sidebarItems.unshift({
 // 生成 .vitepress/config.ts 文件
 const configContent = `import { defineConfig } from 'vitepress'
 import markdownItTaskCheckbox from 'markdown-it-task-checkbox'
-iimport { pagefindPlugin } from 'vitepress-plugin-pagefind' // 搜索插件更换为pagefind
+import { pagefindPlugin } from 'vitepress-plugin-pagefind' // 搜索插件更换为pagefind
 
 export default defineConfig({
   base: '/eMule_Sharing/', // 你的 GitHub Pages 仓库名称
