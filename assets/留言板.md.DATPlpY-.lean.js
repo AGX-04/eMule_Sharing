@@ -1,0 +1,1 @@
+import{_ as a,c as e,o as s,a3 as r}from"./chunks/framework.-SSy0WUQ.js";const u=JSON.parse('{"title":"留言板","description":"","frontmatter":{},"headers":[],"relativePath":"留言板.md","filePath":"留言板.md"}'),o={name:"留言板.md"};function i(c,t,_,n,d,p){return s(),e("div",{"data-pagefind-body":!0},t[0]||(t[0]=[r("",5)]))}const m=a(o,[["render",i]]);export{u as __pageData,m as default};
