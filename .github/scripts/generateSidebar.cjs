@@ -25,6 +25,10 @@ const customOrderDirs = [
   '事件聚合',
   // 列表中未提及的文件夹会按照字母顺序排在这些指定文件夹之后
 ];
+// 留言板排最后
+const customOrderFilesAtEnd = [
+  '留言板.md',   
+];
 
 /**
  * 递归扫描目录，生成 VitePress sidebar 配置结构
