@@ -164,7 +164,7 @@ fs.writeFileSync(path.join(themeDir, 'index.js'), themeIndex.trim(), 'utf8'); //
 const styleCss = `
 /* --- 布局和侧边栏宽度调整 --- */
 :root {
-  --vp-sidebar-width: 300px; /* 根据需要调整侧边栏宽度 */
+  --vp-sidebar-width: 280px; /* 根据需要调整侧边栏宽度 */
   --vp-layout-max-width: 1440px; /* 根据需要调整整个布局的最大宽度，以提供更多内容空间 */
 }
 
