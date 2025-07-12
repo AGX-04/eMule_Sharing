@@ -10,7 +10,6 @@ const MARKDOWN_EXT = '.md'; // 只识别 md 文件
 // 定义你希望靠前显示的文件名的优先级 (不含路径，只文件名)
 const customOrderFiles = [
   'index.md', // 示例：如果你有 README.md 希望它靠前，可以放在这里
-  // 'Getting-Started.md',
 ];
 
 // 定义你希望靠前显示的文件夹的优先级
@@ -23,29 +22,13 @@ const customOrderDirs = [
   'PBS纪录片',
   '其他纪录片',
   '事件聚合',
-  // 列表中未提及的文件夹会按照字母顺序排在这些指定文件夹之后
+  // 未列出的文件夹会按字母序排在这些后面
 ];
 
 // 留言板排最后（不参与常规排序，后续单独追加）
 const customOrderFilesAtEnd = [
   '留言板.md',   
 ];
-
-// --- Giscus 评论系统配置 ---
-// 请填写你的 Giscus 信息（这些会自动写入 config.ts，无需手动编辑 config.ts）
-const giscusConfig = {
-  repo: 'AGX-04/eMule_Sharing',
-  repoId: 'R_kgDOKu7dZw',
-  category: 'General',
-  categoryId: 'DIC_kwDOKu7dZ84Cs3PD',
-  mapping: 'pathname',
-  strict: '0',
-  reactionsEnabled: '1',
-  emitMetadata: '0',
-  inputPosition: 'bottom',
-  theme: 'preferred_color_scheme',
-  lang: 'zh-CN'
-};
 
 /**
  * 递归扫描目录，生成 VitePress sidebar 配置结构
@@ -90,7 +73,6 @@ function walk(dir, basePath = '') {
       const name = entry.name.slice(0, -MARKDOWN_EXT.length);
       // 确保 link 使用 / 开头表示根路径，并对路径进行编码
       const link = '/' + encodeURI(relativePath.replace(/\\/g, '/').replace(MARKDOWN_EXT, ''));
-      // console.log(`✔️ 文件: ${entry.name} -> link: ${link}`); // 调试用
       items.push({ text: name, link });
     }
   }
@@ -107,28 +89,21 @@ function sortSidebarItems(items) {
   const files = items.filter(item => item.link); // 有link的是文件
   const dirs = items.filter(item => item.items); // 有items的是文件夹
 
-  // 根据 customOrderFiles 排序文件
+  // 文件排序
   files.sort((a, b) => {
-    // 加上扩展名与 customOrderFiles 匹配，确保正确比较
     const aIndex = customOrderFiles.indexOf(a.text + MARKDOWN_EXT);
     const bIndex = customOrderFiles.indexOf(b.text + MARKDOWN_EXT);
-
-    if (aIndex === -1 && bIndex === -1) {
-      return a.text.localeCompare(b.text); // 都不在自定义列表里，按字母顺序
-    }
-    if (aIndex === -1) return 1; // A 不在自定义列表，B 在，B 靠前
-    if (bIndex === -1) return -1; // B 不在自定义列表，A 在，A 靠前
-    return aIndex - bIndex; // 都在自定义列表里，按自定义顺序
+    if (aIndex === -1 && bIndex === -1) return a.text.localeCompare(b.text);
+    if (aIndex === -1) return 1;
+    if (bIndex === -1) return -1;
+    return aIndex - bIndex;
   });
 
-  // 根据 customOrderDirs 排序文件夹
+  // 目录排序
   dirs.sort((a, b) => {
     const aIndex = customOrderDirs.indexOf(a.text);
     const bIndex = customOrderDirs.indexOf(b.text);
-
-    if (aIndex === -1 && bIndex === -1) {
-      return a.text.localeCompare(b.text); // 都不在自定义列表里，按字母顺序
-    }
+    if (aIndex === -1 && bIndex === -1) return a.text.localeCompare(b.text);
     if (aIndex === -1) return 1;
     if (bIndex === -1) return -1;
     return aIndex - bIndex;
@@ -153,11 +128,9 @@ sidebarItems.unshift({
 });
 
 // === 留言板单独追加到最后 ===
-// 只追加 customOrderFilesAtEnd 中存在且真实存在于根目录下的文件
 for (const filename of customOrderFilesAtEnd) {
   const filePath = path.join('.', filename);
   if (fs.existsSync(filePath)) {
-    // 留言板文件存在就加到侧边栏底部
     const name = filename.slice(0, -MARKDOWN_EXT.length);
     const link = '/' + encodeURI(filename.replace(/\\/g, '/').replace(MARKDOWN_EXT, ''));
     sidebarItems.push({
@@ -171,7 +144,6 @@ for (const filename of customOrderFilesAtEnd) {
 const configContent = `import { defineConfig } from 'vitepress'
 import markdownItTaskCheckbox from 'markdown-it-task-checkbox'
 import { chineseSearchOptimize, pagefindPlugin } from 'vitepress-plugin-pagefind'
-import { giscusPlugin } from 'vitepress-plugin-giscus'
 
 export default defineConfig({
   base: '/eMule_Sharing/', // 你的 GitHub Pages 仓库名称
@@ -187,28 +159,14 @@ export default defineConfig({
       md.use(markdownItTaskCheckbox); // 任务列表插件
     }
   },
-  // --- 新增：Vite 配置，用于集成 Pagefind 插件和 Giscus 评论插件 ---
+  // --- 新增：Vite 配置，用于集成 Pagefind 插件 ---
   vite: {
     plugins: [
       pagefindPlugin({
         customSearchQuery: chineseSearchOptimize // pagefind的中文搜索优化语句
-      }),
-      giscusPlugin({
-        repo: '${giscusConfig.repo}',
-        repoId: '${giscusConfig.repoId}',
-        category: '${giscusConfig.category}',
-        categoryId: '${giscusConfig.categoryId}',
-        mapping: '${giscusConfig.mapping}',
-        strict: ${giscusConfig.strict},
-        reactionsEnabled: ${giscusConfig.reactionsEnabled},
-        emitMetadata: ${giscusConfig.emitMetadata},
-        inputPosition: '${giscusConfig.inputPosition}',
-        theme: '${giscusConfig.theme}',
-        lang: '${giscusConfig.lang}'
       })
     ]
   }
-  // --- 新增 Vite 配置 结束 ---
 })
 `;
 
@@ -239,7 +197,6 @@ const styleCss = `
 /* --- 侧边栏文本换行样式 --- */
 .VPSidebarItem .text {
   word-break: break-all; /* 强制在任何字符处换行，包括英文单词内部 */
-  /* 也可以尝试 word-wrap: break-word; 在某些浏览器或特定文本下效果可能更好 */
 }
 /* --- 侧边栏文本换行样式 结束 --- */
 
@@ -248,52 +205,49 @@ const styleCss = `
 /* 隐藏 VitePress 默认的列表项目符号 */
 ul {
   list-style-type: none; /* 移除无序列表的默认项目符号 */
-  padding-left: 0;      /* 移除默认左内边距 */
-  margin: 0;            /* 确保 ul 没有额外外边距 */
+  padding-left: 0;
+  margin: 0;
 }
 
 /* 任务列表项的基本样式 */
 li.task-list-item {
-  list-style-type: none; /* 再次确保移除列表项本身的符号 */
-  margin: 0;             /* 清除 li 自身的上下外边距 */
-  padding: 0;            /* 清除 li 自身的内边距 */
-  
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
   display: flex;
   align-items: baseline;
-  gap: 0.5em;            /* 复选框和文本之间的间距 */
-  line-height: 1.5;      /* 保持一个舒适的行高，防止文字粘连 */
+  gap: 0.5em;
+  line-height: 1.5;
 }
 
-/* !!! 关键修改: 针对任务列表项内部的 p 标签，强制清除其上下外边距和内边距 !!! */
+/* 针对任务列表项内部的 p 标签，强制清除其上下外边距和内边距 */
 li.task-list-item p {
-  margin: 0 !important; /* 强制移除 p 标签的上下外边距 */
-  padding: 0 !important; /* 强制移除 p 标签的内边距 */
-  display: inline;      /* 可选：将 p 变为行内元素，进一步减少其对布局的影响 */
+  margin: 0 !important;
+  padding: 0 !important;
+  display: inline;
 }
-
 
 /* 复选框本身的样式调整 */
 li input[type="checkbox"] {
-  margin: 0;             /* 确保复选框本身也没有额外边距 */
+  margin: 0;
   padding: 0;
-  transform: scale(1.2); /* 放大复选框图标，使其更易点击和查看 */
-  flex-shrink: 0;        /* 防止复选框在空间不足时缩小 */
+  transform: scale(1.2);
+  flex-shrink: 0;
 }
 
 /* 文本标签的样式 */
 li.task-list-item label {
-  margin: 0;             /* 确保 label 也没有额外边距 */
+  margin: 0;
   padding: 0;
-  white-space: normal;   /* 确保文本正常换行 */
-  flex-grow: 1;          /* 允许文本占据剩余空间 */
+  white-space: normal;
+  flex-grow: 1;
 }
 
 /* --- 勾选复选框时行变暗效果 --- */
-/* 当复选框被勾选时，选择其相邻的 label 元素（包含文本），并改变样式 */
 li.task-list-item input[type="checkbox"]:checked + label {
-  color: #888; /* 文本颜色变暗（深灰色）*/
-  opacity: 0.7; /* 降低不透明度，使整行显得更暗淡 */
-  transition: color 0.3s ease, opacity 0.3s ease; /* 添加平滑过渡效果 */
+  color: #888;
+  opacity: 0.7;
+  transition: color 0.3s ease, opacity 0.3s ease;
 }
 
 /* 确保 <del> 标签没有删除线，颜色和不透明度恢复默认 */
@@ -305,4 +259,31 @@ del {
 `;
 fs.writeFileSync(path.join(themeDir, 'style.css'), styleCss.trim(), 'utf8');
 
-console.log('✅ 已生成 .vitepress/config.ts, theme/index.js, style.css');
+// === 自动生成 .vitepress/components/Giscus.vue 组件，集成你的 giscus 参数 ===
+const componentsDir = '.vitepress/components';
+const giscusVueContent = `
+<script setup>
+import { Giscus } from '@giscus/vue'
+</script>
+
+<template>
+  <Giscus
+    repo="AGX-04/eMule_Sharing"
+    repo-id="R_kgDOKu7dZw"
+    category="General"
+    category-id="DIC_kwDOKu7dZ84Cs3PD"
+    mapping="pathname"
+    strict="0"
+    reactions-enabled="1"
+    emit-metadata="0"
+    input-position="bottom"
+    theme="preferred_color_scheme"
+    lang="zh-CN"
+  />
+</template>
+`.trim();
+
+fs.mkdirSync(componentsDir, { recursive: true }); // 创建组件目录
+fs.writeFileSync(path.join(componentsDir, 'Giscus.vue'), giscusVueContent, 'utf8'); // 写入 Giscus.vue
+
+console.log('✅ 已生成 .vitepress/config.ts, theme/index.js, style.css, components/Giscus.vue');
