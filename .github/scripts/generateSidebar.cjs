@@ -130,6 +130,7 @@ sidebarItems.unshift({
 // 生成 .vitepress/config.ts 文件
 const configContent = `import { defineConfig } from 'vitepress'
 import markdownItTaskCheckbox from 'markdown-it-task-checkbox'
+import vitepressSearch from 'vitepress-plugin-search' // 引入搜索插件
 
 export default defineConfig({
   base: '/eMule_Sharing/', // 你的 GitHub Pages 仓库名称
@@ -139,18 +140,23 @@ export default defineConfig({
   srcDir: '.', // 文档源目录，这里是项目根目录
   themeConfig: {
     sidebar: ${JSON.stringify(sidebarItems, null, 2)}, // 动态生成的侧边栏
-    // --- 恢复 VitePress 默认的本地搜索 (支持英文) ---
-    search: {
-      provider: 'local' // 启用本地搜索
-    }
-    // --- 默认搜索配置 结束 ---
   },
   markdown: {
     config: (md) => {
       md.use(markdownItTaskCheckbox); // 任务列表插件
     }
+  },
+  // --- 增加 Vite 配置块 ---
+  vite: {
+    plugins: [
+      vitepressSearch({
+        previewLength: 62,
+        buttonLabel: '搜索',
+        placeholder: '输入关键词...',
+        tokenize: 'full'
+      })
+    ]
   }
-  // --- 移除了 Vite 配置块 ---
 })
 `;
 
