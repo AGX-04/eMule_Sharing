@@ -222,24 +222,42 @@ const giscusHtml = `
 `.trim();
 
 const boardPath = './留言板.md';
+// 保证留言板有标题、欢迎语和唯一Giscus代码
+const boardTitle = '# 留言板';
+const boardWelcome = '欢迎留言、提问或建议！';
+
+let needUpdate = false;
+let content = '';
 if (fs.existsSync(boardPath)) {
-  let content = fs.readFileSync(boardPath, 'utf8');
+  content = fs.readFileSync(boardPath, 'utf8');
+  if (!content.includes(boardTitle)) {
+    content = boardTitle + '\n\n' + content;
+    needUpdate = true;
+  }
+  if (!content.includes(boardWelcome)) {
+    content = content.replace(boardTitle, boardTitle + '\n\n' + boardWelcome + '\n');
+    needUpdate = true;
+  }
+  // 清除所有旧的 giscus.app/client.js 段落
+  const giscusRegex = /<script src="https:\/\/giscus\.app\/client\.js"[\s\S]*?<\/script>/g;
   if (!content.includes('giscus.app/client.js')) {
-    content += '\n\n' + giscusHtml;
-    fs.writeFileSync(boardPath, content, 'utf8');
-    console.log('✅ 已自动插入 Giscus 评论代码到留言板.md');
+    content = content.trim() + '\n\n' + giscusHtml;
+    needUpdate = true;
+  } else if ((content.match(/giscus\.app\/client\.js/g) || []).length > 1) {
+    // 多余的giscus片段，只保留一个
+    content = content.replace(giscusRegex, '');
+    content = content.trim() + '\n\n' + giscusHtml;
+    needUpdate = true;
+  }
+  if (needUpdate) {
+    fs.writeFileSync(boardPath, content.trim(), 'utf8');
+    console.log('✅ 留言板.md内容已自动补全/修正');
   } else {
-    console.log('ℹ️ 留言板.md 已包含 Giscus 评论代码，无需重复插入');
+    console.log('ℹ️ 留言板.md 已是标准内容，无需修改');
   }
 } else {
-  // 如果留言板不存在，自动生成一个带评论的留言板
-  const boardContent = `# 留言板
-
-欢迎留言、提问或建议！
-
-${giscusHtml}
-`;
-  fs.writeFileSync(boardPath, boardContent.trim(), 'utf8');
+  content = `${boardTitle}\n\n${boardWelcome}\n\n${giscusHtml}`;
+  fs.writeFileSync(boardPath, content.trim(), 'utf8');
   console.log('✅ 已新建留言板.md并插入 Giscus 评论代码');
 }
 
