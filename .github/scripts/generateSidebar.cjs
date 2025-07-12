@@ -134,7 +134,12 @@ export default defineConfig({
   description: '提供道兰当年发布纪录片的ed2k链接资源并持续供源',
   srcDir: '.', // 文档源目录，这里是项目根目录
   themeConfig: {
-    sidebar: ${JSON.stringify(sidebarItems, null, 2)} // 动态生成的侧边栏
+    sidebar: ${JSON.stringify(sidebarItems, null, 2)}, // 动态生成的侧边栏
+    // --- 搜索配置 ---
+    search: {
+    provider: 'local' // 启用本地搜索
+    }
+    // --- 搜索配置 结束 ---
   },
   markdown: {
     config: (md) => {
