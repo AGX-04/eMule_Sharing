@@ -180,11 +180,13 @@ ul {
 /* 任务列表项的基本样式 */
 li.task-list-item {
   list-style-type: none; /* 再次确保移除列表项本身的符号 */
-  margin: 0.2em 0;       /* 任务列表项之间的垂直间距 */
+  margin: 0;       /* 任务列表项之间的垂直间距 */
   padding: 0;            /* 移除默认内边距 */
   /* 可以选择添加 flexbox 布局以更好地对齐复选框和文本 */
   display: flex;
   align-items: baseline; /* 垂直对齐，使复选框与文本基线对齐 */
+  /* 我们可以通过 line-height 和 gap 协同控制间距 */
+  line-height: 1.2;      /* 尝试一个稍微比 1 大一点的值，防止文字粘连 */
   gap: 0.5em;            /* 复选框和文本之间的间距 */
 }
 
