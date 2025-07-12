@@ -152,12 +152,10 @@ export default defineConfig({
   // --- 新增：Vite 配置，用于集成搜索插件 ---
   vite: {
     plugins: [
-      searchPlugin({ // 这里直接调用 searchPlugin 函数
-        // 关键配置: 告诉 FlexSearch 不要对非 ASCII 字符编码，以正确支持中文
-        encode: false,
-        // 指定语言为中文，激活插件内置的中文分词适配器
-        language: 'zh'
-      })
+      // --- 关键修改：直接使用导入的 searchPlugin，不再作为函数调用 ---
+      searchPlugin 
+      // 注意：如果插件本身接受配置，通常会在导入时处理，或者在单独的配置对象中
+      // 但鉴于之前的错误，这可能是最直接的导入方式
     ]
   }
   // --- 新增 Vite 配置 结束 ---
