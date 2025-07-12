@@ -131,7 +131,7 @@ sidebarItems.unshift({
 const configContent = `import { defineConfig } from 'vitepress'
 import markdownItTaskCheckbox from 'markdown-it-task-checkbox'
 // --- 新增：导入搜索插件 ---
-import { searchPlugin } from 'vitepress-plugin-search'
+import searchPlugin from 'vitepress-plugin-search'
 
 export default defineConfig({
   base: '/eMule_Sharing/', // 你的 GitHub Pages 仓库名称
