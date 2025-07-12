@@ -1,1 +1,0 @@
-import{_ as e,c as t,o as r,ae as o}from"./chunks/framework.C1MtjZ7i.js";const p=JSON.parse('{"title":"","description":"","frontmatter":{},"headers":[],"relativePath":"NHK纪录片/说明.md","filePath":"NHK纪录片/说明.md"}'),n={name:"NHK纪录片/说明.md"};function i(l,a,h,d,s,c){return r(),t("div",null,a[0]||(a[0]=[o("",10)]))}const m=e(n,[["render",i]]);export{p as __pageData,m as default};

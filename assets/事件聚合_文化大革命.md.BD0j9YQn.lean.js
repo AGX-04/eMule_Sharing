@@ -1,0 +1,1 @@
+import{_ as A,c as B,o as e,ag as r}from"./chunks/framework.BM7INhSq.js";const m=JSON.parse('{"title":"","description":"","frontmatter":{},"headers":[],"relativePath":"事件聚合/文化大革命.md","filePath":"事件聚合/文化大革命.md"}'),t={name:"事件聚合/文化大革命.md"};function a(l,E,D,i,n,_){return e(),B("div",null,E[0]||(E[0]=[r("",1)]))}const h=A(t,[["render",a]]);export{m as __pageData,h as default};

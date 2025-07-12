@@ -1,0 +1,1 @@
+import{_ as e,c as s,o as p,ag as t}from"./chunks/framework.BM7INhSq.js";const E=JSON.parse('{"title":"","description":"","frontmatter":{},"headers":[],"relativePath":"书籍/大跃进亲历记.李锐.md","filePath":"书籍/大跃进亲历记.李锐.md"}'),n={name:"书籍/大跃进亲历记.李锐.md"};function o(_,a,i,l,c,d){return p(),s("div",null,a[0]||(a[0]=[t("",4)]))}const D=e(n,[["render",o]]);export{E as __pageData,D as default};
