@@ -271,16 +271,6 @@ del {
   color: inherit;
   opacity: 1;
 }
-/* --- 新增：Logo 图片大小定义 --- */
-.VPNavBarTitle img {
-  max-height: 50px; /* 设置最大高度，例如 32px */
-  height: 40px;    /* 明确设置高度 */
-  width: auto;     /* 宽度自动，保持图片比例 */
-  /* 或者如果你想要固定宽度和高度（可能会导致拉伸）： */
-  /* width: 100px; */
-  /* height: 50px; */
-}
-/* --- Logo 图片大小定义结束 --- */
 `;
 fs.writeFileSync(path.join(themeDir, 'style.css'), styleCss.trim(), 'utf8');
 
