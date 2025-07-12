@@ -131,7 +131,7 @@ sidebarItems.unshift({
 const configContent = `import { defineConfig } from 'vitepress'
 import markdownItTaskCheckbox from 'markdown-it-task-checkbox'
 // --- 关键更新：使用默认导入 ---
-import { pagefindPlugin } from 'vitepress-plugin-pagefind'
+import { chineseSearchOptimize, pagefindPlugin } from 'vitepress-plugin-pagefind'
 
 export default defineConfig({
   base: '/eMule_Sharing/', // 你的 GitHub Pages 仓库名称
@@ -151,7 +151,9 @@ export default defineConfig({
   vite: {
     plugins: [
       // --- 关键更新：将默认导入的插件作为函数调用 ---
-      pagefindPlugin() // 使用最新的导入方式和调用方式，无额外配置参数
+      pagefindPlugin({
+        customSearchQuery: chineseSearchOptimize // pagefind的中文搜索优化语句
+      })
     ]
   }
   // --- 新增 Vite 配置 结束 ---
