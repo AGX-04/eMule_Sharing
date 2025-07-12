@@ -131,7 +131,7 @@ sidebarItems.unshift({
 const configContent = `import { defineConfig } from 'vitepress'
 import markdownItTaskCheckbox from 'markdown-it-task-checkbox'
 // --- 新增：导入搜索插件 ---
-import * as searchPluginModule from 'vitepress-plugin-search'
+import searchPlugin from 'vitepress-plugin-search'
 
 export default defineConfig({
   base: '/eMule_Sharing/', // 你的 GitHub Pages 仓库名称
@@ -152,7 +152,7 @@ export default defineConfig({
   // --- 新增：Vite 配置，用于集成搜索插件 ---
   vite: {
     plugins: [
-      searchPluginModule.searchPlugin({
+      searchPlugin({ // 这里直接调用 searchPlugin 函数
         // 关键配置: 告诉 FlexSearch 不要对非 ASCII 字符编码，以正确支持中文
         encode: false,
         // 指定语言为中文，激活插件内置的中文分词适配器
