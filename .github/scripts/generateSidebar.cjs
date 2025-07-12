@@ -119,18 +119,41 @@ export default defineConfig({
   themeConfig: {
     sidebar: ${JSON.stringify(sidebarItems, null, 2)},
   },
+// 复选框插件
   markdown: {
     config: (md) => {
       md.use(markdownItTaskCheckbox);
     }
   },
+// 搜索插件以及中文强化
   vite: {
     plugins: [
       pagefindPlugin({
         customSearchQuery: chineseSearchOptimize
       })
     ]
-  }
+  },
+  head: [
+    [
+      'script',
+      {
+        src: 'https://giscus.app/client.js',
+        'data-repo': 'AGX-04/eMule_Sharing',
+        'data-repo-id': 'R_kgDOKu7dZw',
+        'data-category': 'General',
+        'data-category-id': 'DIC_kwDOKu7dZ84Cs3PD',
+        'data-mapping': 'pathname',
+        'data-strict': '0',
+        'data-reactions-enabled': '1',
+        'data-emit-metadata': '0',
+        'data-input-position': 'bottom',
+        'data-theme': 'preferred_color_scheme',
+        'data-lang': 'zh-CN',
+        crossorigin: 'anonymous',
+        async: ''
+      }
+    ]
+  ]
 })
 `;
 
@@ -200,65 +223,5 @@ del {
 }
 `;
 fs.writeFileSync(path.join(themeDir, 'style.css'), styleCss.trim(), 'utf8');
-
-// === 自动在留言板.md 末尾插入 Giscus 评论代码（如果没插过） ===
-const giscusHtml = `
-<div id="giscus-comments"></div>
-<script src="https://giscus.app/client.js"
-        data-repo="AGX-04/eMule_Sharing"
-        data-repo-id="R_kgDOKu7dZw"
-        data-category="General"
-        data-category-id="DIC_kwDOKu7dZ84Cs3PD"
-        data-mapping="pathname"
-        data-strict="0"
-        data-reactions-enabled="1"
-        data-emit-metadata="0"
-        data-input-position="bottom"
-        data-theme="preferred_color_scheme"
-        data-lang="zh-CN"
-        crossorigin="anonymous"
-        async>
-</script>
-`.trim();
-
-const boardPath = './留言板.md';
-// 保证留言板有标题、欢迎语和唯一Giscus代码
-const boardTitle = '# 留言板';
-const boardWelcome = '欢迎留言、提问或建议！';
-
-let needUpdate = false;
-let content = '';
-if (fs.existsSync(boardPath)) {
-  content = fs.readFileSync(boardPath, 'utf8');
-  if (!content.includes(boardTitle)) {
-    content = boardTitle + '\n\n' + content;
-    needUpdate = true;
-  }
-  if (!content.includes(boardWelcome)) {
-    content = content.replace(boardTitle, boardTitle + '\n\n' + boardWelcome + '\n');
-    needUpdate = true;
-  }
-  // 清除所有旧的 giscus.app/client.js 段落
-  const giscusRegex = /<script src="https:\/\/giscus\.app\/client\.js"[\s\S]*?<\/script>/g;
-  if (!content.includes('giscus.app/client.js')) {
-    content = content.trim() + '\n\n' + giscusHtml;
-    needUpdate = true;
-  } else if ((content.match(/giscus\.app\/client\.js/g) || []).length > 1) {
-    // 多余的giscus片段，只保留一个
-    content = content.replace(giscusRegex, '');
-    content = content.trim() + '\n\n' + giscusHtml;
-    needUpdate = true;
-  }
-  if (needUpdate) {
-    fs.writeFileSync(boardPath, content.trim(), 'utf8');
-    console.log('✅ 留言板.md内容已自动补全/修正');
-  } else {
-    console.log('ℹ️ 留言板.md 已是标准内容，无需修改');
-  }
-} else {
-  content = `${boardTitle}\n\n${boardWelcome}\n\n${giscusHtml}`;
-  fs.writeFileSync(boardPath, content.trim(), 'utf8');
-  console.log('✅ 已新建留言板.md并插入 Giscus 评论代码');
-}
 
 console.log('✅ 已生成 .vitepress/config.ts, theme/index.js, style.css');
