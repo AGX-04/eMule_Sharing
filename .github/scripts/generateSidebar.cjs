@@ -130,7 +130,8 @@ sidebarItems.unshift({
 // 生成 .vitepress/config.ts 文件
 const configContent = `import { defineConfig } from 'vitepress'
 import markdownItTaskCheckbox from 'markdown-it-task-checkbox'
-import pagefindPlugin from 'vitepress-plugin-pagefind' // 搜索插件更换为pagefind
+// --- 关键更新：使用默认导入 ---
+import pagefindPlugin from 'vitepress-plugin-pagefind'
 
 export default defineConfig({
   base: '/eMule_Sharing/', // 你的 GitHub Pages 仓库名称
@@ -149,12 +150,8 @@ export default defineConfig({
   // --- 新增：Vite 配置，用于集成 Pagefind 插件 ---
   vite: {
     plugins: [
-      pagefindPlugin({
-        // Pagefind 插件的配置，支持中文
-        // 注意：这里的配置通常比较简单，Pagefind 本身会处理多语言和分词
-        // 你可以根据需要添加其他 Pagefind 配置选项
-        // https://github.com/JeremyWei96/vitepress-plugin-pagefind
-      })
+      // --- 关键更新：将默认导入的插件作为函数调用 ---
+      pagefindPlugin() // 使用最新的导入方式和调用方式，无额外配置参数
     ]
   }
   // --- 新增 Vite 配置 结束 ---
