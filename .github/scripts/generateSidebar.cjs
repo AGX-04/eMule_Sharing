@@ -158,6 +158,7 @@ export default defineConfig({
     ]
   }
   // --- 新增 Vite 配置 结束 ---
+})
 `;
 
 fs.mkdirSync('.vitepress', { recursive: true }); // 创建 .vitepress 目录
