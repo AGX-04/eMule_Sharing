@@ -174,41 +174,43 @@ const styleCss = `
 ul {
   list-style-type: none; /* 移除无序列表的默认项目符号 */
   padding-left: 0;      /* 移除默认左内边距 */
-  margin: 0 !important; /* 强制移除 ul 的所有外边距 */
+  margin: 0;            /* 确保 ul 没有额外外边距 */
 }
 
 /* 任务列表项的基本样式 */
 li.task-list-item {
   list-style-type: none; /* 再次确保移除列表项本身的符号 */
-  margin: 0 !important;  /* 强制移除 li.task-list-item 的所有外边距 */
-  padding: 0 !important; /* 强制移除 li.task-list-item 的所有内边距 */
+  margin: 0;             /* 清除 li 自身的上下外边距 */
+  padding: 0;            /* 清除 li 自身的内边距 */
   
   display: flex;
   align-items: baseline;
-  line-height: 1.2;      /* 保持一个舒适的行高 */
   gap: 0.5em;            /* 复选框和文本之间的间距 */
+  line-height: 1.5;      /* 保持一个舒适的行高，防止文字粘连 */
 }
 
-/* 针对任务列表项内部可能生成的 p 标签，强制移除其上下外边距 */
+/* !!! 关键修改: 针对任务列表项内部的 p 标签，强制清除其上下外边距和内边距 !!! */
 li.task-list-item p {
-  margin: 0 !important;
-  padding: 0 !important;
+  margin: 0 !important; /* 强制移除 p 标签的上下外边距 */
+  padding: 0 !important; /* 强制移除 p 标签的内边距 */
+  display: inline;      /* 可选：将 p 变为行内元素，进一步减少其对布局的影响 */
 }
+
 
 /* 复选框本身的样式调整 */
 li input[type="checkbox"] {
-  margin: 0 !important; /* 确保复选框本身也没有额外边距 */
-  padding: 0 !important;
-  transform: scale(1.2);
-  flex-shrink: 0;
+  margin: 0;             /* 确保复选框本身也没有额外边距 */
+  padding: 0;
+  transform: scale(1.2); /* 放大复选框图标，使其更易点击和查看 */
+  flex-shrink: 0;        /* 防止复选框在空间不足时缩小 */
 }
 
 /* 文本标签的样式 */
 li.task-list-item label {
-  margin: 0 !important; /* 确保 label 也没有额外边距 */
-  padding: 0 !important;
-  white-space: normal;
-  flex-grow: 1;
+  margin: 0;             /* 确保 label 也没有额外边距 */
+  padding: 0;
+  white-space: normal;   /* 确保文本正常换行 */
+  flex-grow: 1;          /* 允许文本占据剩余空间 */
 }
 
 /* --- 勾选复选框时行变暗效果 --- */
