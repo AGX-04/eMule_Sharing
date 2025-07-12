@@ -146,18 +146,18 @@ export default defineConfig({
       md.use(markdownItTaskCheckbox); // 任务列表插件
     }
   },
-  // --- 增加 Vite 配置块 ---
+  // --- 新增：Vite 配置，用于集成 Pagefind 插件 ---
   vite: {
     plugins: [
-      pagefindPlugin({
-        btnPlaceholder: '搜索',
-        placeholder: '输入关键词...',
-        emptyText: '暂无结果',
-        forceLanguage: 'zh-cn'
+      PagefindPlugin({
+        // Pagefind 插件的配置，支持中文
+        // 注意：这里的配置通常比较简单，Pagefind 本身会处理多语言和分词
+        // 你可以根据需要添加其他 Pagefind 配置选项
+        // https://github.com/JeremyWei96/vitepress-plugin-pagefind
       })
     ]
   }
-})
+  // --- 新增 Vite 配置 结束 ---
 `;
 
 fs.mkdirSync('.vitepress', { recursive: true }); // 创建 .vitepress 目录

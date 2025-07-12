@@ -4,12 +4,17 @@
   "version": "1.0.0",
   "description": "ED2K纪录片索引网站",
   "scripts": {
-    "build": "vitepress build",
-    "dev": "vitepress dev"
+    "dev": "vitepress dev",
+    "build": "node generateSidebar.cjs && vitepress build && pagefind --source .vitepress/dist" 
+    
   },
   "dependencies": {
     "vitepress": "^1.0.0",
     "markdown-it-task-checkbox": "^1.0.6",
-    "pagefind": "^0.8.0"
+    "vitepress-plugin-pagefind": "^0.2.1"
+    
+  },
+  "devDependencies": {
+    "pagefind": "^1.2.0"
   }
 }
