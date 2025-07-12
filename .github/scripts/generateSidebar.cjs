@@ -117,7 +117,7 @@ export default defineConfig({
   themeConfig: {
     sidebar: ${JSON.stringify(sidebarItems, null, 2)},
     // --- 新增 Logo 配置 ---
-    logo: '/assets/emule_sharing.png', // <-- 这里填写你的 Logo 图片在 public 目录下的相对路径
+    logo: '/emule_sharing.png', // <-- 这里填写你的 Logo 图片在 public 目录下的相对路径
   },
 // --- 复选框插件
   markdown: {
