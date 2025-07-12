@@ -130,8 +130,6 @@ sidebarItems.unshift({
 // 生成 .vitepress/config.ts 文件
 const configContent = `import { defineConfig } from 'vitepress'
 import markdownItTaskCheckbox from 'markdown-it-task-checkbox'
-// --- 新增：导入搜索插件 ---
-import searchPlugin from 'vitepress-plugin-search'
 
 export default defineConfig({
   base: '/eMule_Sharing/', // 你的 GitHub Pages 仓库名称
@@ -141,24 +139,18 @@ export default defineConfig({
   srcDir: '.', // 文档源目录，这里是项目根目录
   themeConfig: {
     sidebar: ${JSON.stringify(sidebarItems, null, 2)}, // 动态生成的侧边栏
-    // --- 搜索配置 (由 vitepress-plugin-search 接管) ---
-    // 旧的默认搜索配置已被移除，无需再次添加
+    // --- 恢复 VitePress 默认的本地搜索 (支持英文) ---
+    search: {
+      provider: 'local' // 启用本地搜索
+    }
+    // --- 默认搜索配置 结束 ---
   },
   markdown: {
     config: (md) => {
       md.use(markdownItTaskCheckbox); // 任务列表插件
     }
-  },
-  // --- 新增：Vite 配置，用于集成搜索插件 ---
-  vite: {
-    plugins: [
-      // --- 关键修改：直接使用导入的 searchPlugin，不再作为函数调用 ---
-      searchPlugin 
-      // 注意：如果插件本身接受配置，通常会在导入时处理，或者在单独的配置对象中
-      // 但鉴于之前的错误，这可能是最直接的导入方式
-    ]
   }
-  // --- 新增 Vite 配置 结束 ---
+  // --- 移除了 Vite 配置块 ---
 })
 `;
 
