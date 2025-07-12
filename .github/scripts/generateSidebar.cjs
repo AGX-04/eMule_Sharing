@@ -162,10 +162,62 @@ fs.writeFileSync(path.join(themeDir, 'index.js'), themeIndex.trim(), 'utf8'); //
 
 // 生成 .vitepress/theme/style.css 文件
 const styleCss = `
-/* 你可以在这里添加你需要的自定义全局样式 */
-/* 例如，如果你需要一些全局的字体设置或颜色变量 */
+/* --- 布局和侧边栏宽度调整 --- */
+:root {
+  --vp-sidebar-width: 240px; /* 根据需要调整侧边栏宽度 */
+  --vp-layout-max-width: 1440px; /* 根据需要调整整个布局的最大宽度，以提供更多内容空间 */
+}
 
-/* 确保 VitePress 默认样式能正常加载 */
+/* --- 复选框任务列表样式 --- */
+
+/* 隐藏 VitePress 默认的列表项目符号 */
+ul {
+  list-style-type: none; /* 移除无序列表的默认项目符号 */
+  padding-left: 0;      /* 移除默认左内边距 */
+  margin: 0;            /* 移除默认外边距 */
+}
+
+/* 任务列表项的基本样式 */
+li.task-list-item {
+  list-style-type: none; /* 再次确保移除列表项本身的符号 */
+  margin: 0.5em 0;       /* 任务列表项之间的垂直间距 */
+  padding: 0;            /* 移除默认内边距 */
+  /* 可以选择添加 flexbox 布局以更好地对齐复选框和文本 */
+  display: flex;
+  align-items: baseline; /* 垂直对齐，使复选框与文本基线对齐 */
+  gap: 0.5em;            /* 复选框和文本之间的间距 */
+}
+
+/* 复选框本身的样式调整 */
+li input[type="checkbox"] {
+  margin: 0;             /* 移除所有默认外边距 */
+  padding: 0;            /* 移除所有默认内边距 */
+  transform: scale(1.2); /* 放大复选框图标，使其更易点击和查看 */
+  flex-shrink: 0;        /* 防止复选框在空间不足时缩小 */
+}
+
+/* 文本标签的样式 */
+li.task-list-item label {
+  margin: 0;             /* 移除所有默认外边距 */
+  padding: 0;            /* 移除所有默认内边距 */
+  white-space: normal;   /* 确保文本正常换行 */
+  flex-grow: 1;          /* 允许文本占据剩余空间 */
+}
+
+/* --- 勾选复选框时行变暗效果 --- */
+/* 当复选框被勾选时，选择其相邻的 label 元素（包含文本），并改变样式 */
+li.task-list-item input[type="checkbox"]:checked + label {
+  color: #888; /* 文本颜色变暗（深灰色）*/
+  opacity: 0.7; /* 降低不透明度，使整行显得更暗淡 */
+  transition: color 0.3s ease, opacity 0.3s ease; /* 添加平滑过渡效果 */
+}
+
+/* 确保 <del> 标签没有删除线，颜色和不透明度恢复默认 */
+del {
+  text-decoration: none;
+  color: inherit;
+  opacity: 1;
+}
 `;
 fs.writeFileSync(path.join(themeDir, 'style.css'), styleCss.trim(), 'utf8');
 
