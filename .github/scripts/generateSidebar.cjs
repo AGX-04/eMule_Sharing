@@ -2,27 +2,27 @@ const fs = require('fs');
 const path = require('path');
 
 // --- 配置项 ---
-const IGNORE_DIRS = ['.git', '.vitepress', 'node_modules', '.github']; // 忽略的文件夹
+// 忽略的文件夹和隐藏文件
+const IGNORE_DIRS = ['.git', '.vitepress', 'node_modules', '.github'];
 const MARKDOWN_EXT = '.md'; // 只识别 md 文件
 
 // --- 自定义排序规则 ---
-// 定义你希望靠前显示的文件的优先级
+// 定义你希望靠前显示的文件名的优先级 (不含路径，只文件名)
 const customOrderFiles = [
-  'index.md',       // 示例：如果你有 README.md 希望它靠前，可以放在这里
-  // 'Getting-Started.md', // 示例：可以添加更多具体文件
+  'index.md', // 示例：如果你有 README.md 希望它靠前，可以放在这里
+  // 'Getting-Started.md',
 ];
 
 // 定义你希望靠前显示的文件夹的优先级
 // 按照你希望的顺序排列文件夹名称
 const customOrderDirs = [
-  'NHK纪录片',  // 将“其他纪录片”放在“书籍”之前
+  'NHK纪录片',
   'TBS纪录片',
   'TXN纪录片',
   'BBC纪录片',
   'PBS纪录片',
   '其他纪录片',
   '事件聚合',
-  // 你可以根据你的侧边栏实际文件夹名称和期望顺序，继续添加或调整这里
   // 列表中未提及的文件夹会按照字母顺序排在这些指定文件夹之后
 ];
 
@@ -37,6 +37,7 @@ function walk(dir, basePath = '') {
   const items = [];
 
   for (const entry of entries) {
+    // 忽略指定文件夹和以 '.' 开头的隐藏文件/文件夹
     if (IGNORE_DIRS.includes(entry.name) || entry.name.startsWith('.')) {
       continue;
     }
@@ -52,17 +53,19 @@ function walk(dir, basePath = '') {
         items.push({
           text: entry.name,
           collapsible: true,
-          collapsed: true,
+          collapsed: true, // 默认折叠
           items: sortedChildren // 使用排序后的子项
         });
       }
     } else if (entry.isFile() && entry.name.endsWith(MARKDOWN_EXT)) {
+      // 忽略根目录下的 index.md，因为它通常是网站首页
       if (entry.name === 'index.md' && basePath === '') {
-        continue; // 忽略根目录下的 index.md，因为它通常是网站首页
+        continue;
       }
       const name = entry.name.slice(0, -MARKDOWN_EXT.length);
+      // 确保 link 使用 / 开头表示根路径，并对路径进行编码
       const link = '/' + encodeURI(relativePath.replace(/\\/g, '/').replace(MARKDOWN_EXT, ''));
-      console.log(`✔️ 文件: ${entry.name} -> link: ${link}`);
+      // console.log(`✔️ 文件: ${entry.name} -> link: ${link}`); // 调试用
       items.push({ text: name, link });
     }
   }
@@ -73,7 +76,7 @@ function walk(dir, basePath = '') {
  * 对侧边栏条目进行自定义排序
  * @param {Array} items 待排序的侧边栏条目数组
  * @returns {Array} 排序后的数组
- */
+*/
 function sortSidebarItems(items) {
   // 将文件和文件夹分开，以便独立排序
   const files = items.filter(item => item.link); // 有link的是文件
@@ -81,7 +84,8 @@ function sortSidebarItems(items) {
 
   // 根据 customOrderFiles 排序文件
   files.sort((a, b) => {
-    const aIndex = customOrderFiles.indexOf(a.text + MARKDOWN_EXT); // 加上扩展名与 customOrderFiles 匹配
+    // 加上扩展名与 customOrderFiles 匹配，确保正确比较
+    const aIndex = customOrderFiles.indexOf(a.text + MARKDOWN_EXT);
     const bIndex = customOrderFiles.indexOf(b.text + MARKDOWN_EXT);
 
     if (aIndex === -1 && bIndex === -1) {
@@ -126,6 +130,8 @@ sidebarItems.unshift({
 // 生成 .vitepress/config.ts 文件
 const configContent = `import { defineConfig } from 'vitepress'
 import markdownItTaskCheckbox from 'markdown-it-task-checkbox'
+// --- 新增：导入搜索插件 ---
+import { searchPlugin } from 'vitepress-plugin-search'
 
 export default defineConfig({
   base: '/eMule_Sharing/', // 你的 GitHub Pages 仓库名称
@@ -135,17 +141,26 @@ export default defineConfig({
   srcDir: '.', // 文档源目录，这里是项目根目录
   themeConfig: {
     sidebar: ${JSON.stringify(sidebarItems, null, 2)}, // 动态生成的侧边栏
-    // --- 搜索配置 ---
-    search: {
-    provider: 'local' // 启用本地搜索
-    }
-    // --- 搜索配置 结束 ---
+    // --- 搜索配置 (由 vitepress-plugin-search 接管) ---
+    // 旧的默认搜索配置已被移除，无需再次添加
   },
   markdown: {
     config: (md) => {
       md.use(markdownItTaskCheckbox); // 任务列表插件
     }
+  },
+  // --- 新增：Vite 配置，用于集成搜索插件 ---
+  vite: {
+    plugins: [
+      searchPlugin({
+        // 关键配置: 告诉 FlexSearch 不要对非 ASCII 字符编码，以正确支持中文
+        encode: false,
+        // 指定语言为中文，激活插件内置的中文分词适配器
+        language: 'zh'
+      })
+    ]
   }
+  // --- 新增 Vite 配置 结束 ---
 })
 `;
 
@@ -176,7 +191,7 @@ const styleCss = `
 /* --- 侧边栏文本换行样式 --- */
 .VPSidebarItem .text {
   word-break: break-all; /* 强制在任何字符处换行，包括英文单词内部 */
-  /* 或者 word-wrap: break-word; 效果类似，有些情况下表现更好 */
+  /* 也可以尝试 word-wrap: break-word; 在某些浏览器或特定文本下效果可能更好 */
 }
 /* --- 侧边栏文本换行样式 结束 --- */
 
