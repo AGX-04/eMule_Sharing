@@ -112,10 +112,12 @@ export default defineConfig({
   base: '/eMule_Sharing/',
   lang: 'zh-CN',
   title: 'Emule Sharing',
-  description: '提供道兰当年发布纪录片的ed2k链接资源并持续供源',
+  description: '以道兰当年发布的NHK为主的纪录片ed2k资源归档页面',
   srcDir: '.',
   themeConfig: {
     sidebar: ${JSON.stringify(sidebarItems, null, 2)},
+    // --- 新增 Logo 配置 ---
+    logo: '/assets/emule_sharing.png', // <-- 这里填写你的 Logo 图片在 public 目录下的相对路径
   },
 // --- 复选框插件
   markdown: {
