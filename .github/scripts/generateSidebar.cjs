@@ -25,10 +25,27 @@ const customOrderDirs = [
   '事件聚合',
   // 列表中未提及的文件夹会按照字母顺序排在这些指定文件夹之后
 ];
-// 留言板排最后
+
+// 留言板排最后（不参与常规排序，后续单独追加）
 const customOrderFilesAtEnd = [
   '留言板.md',   
 ];
+
+// --- Giscus 评论系统配置 ---
+// 请填写你的 Giscus 信息（这些会自动写入 config.ts，无需手动编辑 config.ts）
+const giscusConfig = {
+  repo: 'AGX-04/eMule_Sharing',
+  repoId: 'R_kgDOKu7dZw',
+  category: 'General',
+  categoryId: 'DIC_kwDOKu7dZ84Cs3PD',
+  mapping: 'pathname',
+  strict: '0',
+  reactionsEnabled: '1',
+  emitMetadata: '0',
+  inputPosition: 'bottom',
+  theme: 'preferred_color_scheme',
+  lang: 'zh-CN'
+};
 
 /**
  * 递归扫描目录，生成 VitePress sidebar 配置结构
@@ -64,6 +81,10 @@ function walk(dir, basePath = '') {
     } else if (entry.isFile() && entry.name.endsWith(MARKDOWN_EXT)) {
       // 忽略根目录下的 index.md，因为它通常是网站首页
       if (entry.name === 'index.md' && basePath === '') {
+        continue;
+      }
+      // 留言板排最后：根目录下的留言板.md 跳过，后续单独添加
+      if (customOrderFilesAtEnd.includes(entry.name) && basePath === '') {
         continue;
       }
       const name = entry.name.slice(0, -MARKDOWN_EXT.length);
@@ -131,11 +152,26 @@ sidebarItems.unshift({
   link: '/'
 });
 
+// === 留言板单独追加到最后 ===
+// 只追加 customOrderFilesAtEnd 中存在且真实存在于根目录下的文件
+for (const filename of customOrderFilesAtEnd) {
+  const filePath = path.join('.', filename);
+  if (fs.existsSync(filePath)) {
+    // 留言板文件存在就加到侧边栏底部
+    const name = filename.slice(0, -MARKDOWN_EXT.length);
+    const link = '/' + encodeURI(filename.replace(/\\/g, '/').replace(MARKDOWN_EXT, ''));
+    sidebarItems.push({
+      text: name,
+      link: link
+    });
+  }
+}
+
 // 生成 .vitepress/config.ts 文件
 const configContent = `import { defineConfig } from 'vitepress'
 import markdownItTaskCheckbox from 'markdown-it-task-checkbox'
-// --- 关键更新：使用默认导入 ---
 import { chineseSearchOptimize, pagefindPlugin } from 'vitepress-plugin-pagefind'
+import { giscusPlugin } from 'vitepress-plugin-giscus'
 
 export default defineConfig({
   base: '/eMule_Sharing/', // 你的 GitHub Pages 仓库名称
@@ -151,12 +187,24 @@ export default defineConfig({
       md.use(markdownItTaskCheckbox); // 任务列表插件
     }
   },
-  // --- 新增：Vite 配置，用于集成 Pagefind 插件 ---
+  // --- 新增：Vite 配置，用于集成 Pagefind 插件和 Giscus 评论插件 ---
   vite: {
     plugins: [
-      // --- 关键更新：将默认导入的插件作为函数调用 ---
       pagefindPlugin({
         customSearchQuery: chineseSearchOptimize // pagefind的中文搜索优化语句
+      }),
+      giscusPlugin({
+        repo: '${giscusConfig.repo}',
+        repoId: '${giscusConfig.repoId}',
+        category: '${giscusConfig.category}',
+        categoryId: '${giscusConfig.categoryId}',
+        mapping: '${giscusConfig.mapping}',
+        strict: ${giscusConfig.strict},
+        reactionsEnabled: ${giscusConfig.reactionsEnabled},
+        emitMetadata: ${giscusConfig.emitMetadata},
+        inputPosition: '${giscusConfig.inputPosition}',
+        theme: '${giscusConfig.theme}',
+        lang: '${giscusConfig.lang}'
       })
     ]
   }
