@@ -1,3 +1,6 @@
+<center>
+  ![NHK](/public/nhk.png)
+</center>
 ## 功能
 本文件夹内主要存放NHK相关纪录片资源。
 ## 关于NHK纪录片
