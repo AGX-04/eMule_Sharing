@@ -13,7 +13,8 @@ const customOrderFiles = [ // 主页排在首位
 const customOrderDirs = [ // 文件夹按设定排序
   'NHK纪录片',
   'TBS纪录片',
-  'TXN纪录片',
+  'TVTokyo纪录片',
+  'FujiTV纪录片',
   'BBC纪录片',
   'PBS纪录片',
   '其他纪录片',
