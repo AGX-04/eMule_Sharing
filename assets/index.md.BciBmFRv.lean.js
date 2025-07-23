@@ -1,0 +1,1 @@
+import{_ as a,c as t,o as l,a3 as s}from"./chunks/framework.D9fQSg2-.js";const b=JSON.parse('{"title":"","description":"","frontmatter":{},"headers":[],"relativePath":"index.md","filePath":"index.md"}'),i={name:"index.md"};function r(d,e,c,o,n,_){return l(),t("div",{"data-pagefind-body":!0},e[0]||(e[0]=[s("",5)]))}const p=a(i,[["render",r]]);export{b as __pageData,p as default};
